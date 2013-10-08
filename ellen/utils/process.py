@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# AUTHOR:   fanzeyi
-# CREATED:  10:40:56 24/06/2013
-# MODIFIED: 15:26:02 24/06/2013
 
 import shlex
 import logging
@@ -85,7 +82,7 @@ def call2(*args, **kwargs):
 
 
 def jsonize(func):
-    '''将函数返回的字典转化为 json 字符串。'''
+    '''translate from dict to json string '''
     @wraps(func)
     def _(*a, **kw):
         try:
@@ -98,7 +95,7 @@ def jsonize(func):
         elif isinstance(retval, list):
             retval = {"data": retval, "error": 0}
         elif isinstance(retval, dict):
-            if "data" not in retval or \
+            if "data" not in retval or
                     not isinstance(retval["data"], (list, dict)):
                 retval = {"data": retval, "error": 0}
 

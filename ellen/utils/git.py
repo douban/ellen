@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# AUTHOR:   fanzeyi
-# CREATED:  23:29:15 28/05/2013
-# MODIFIED: 13:18:03 02/07/2013
 
 '''
 git
