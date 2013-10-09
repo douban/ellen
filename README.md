@@ -7,3 +7,5 @@ Ellen is a wrapper of pygit2 and git command.
 ## Dependency
 1. git
 1. pygit2
+1. gevent
+1. python-magic
