@@ -24,7 +24,6 @@ from pygit2 import GIT_OBJ_BLOB
 from pygit2 import GIT_OBJ_TREE
 from pygit2 import GIT_OBJ_COMMIT
 
-from libs.text import highlight_code, trunc_utf8, remove_unknown_character
 from . import JagareError
 from .mdiff import mdiff2
 
@@ -184,15 +183,15 @@ def format_commit(sha, commit, repository):
 def format_blame(text, repository):
     RE_EMAIL = re.compile(r'<(?P<email>.*)>')
     # FIXME: highlight_code
-    def _blame_src_highlighted_lines(self, ref, path):
-        HIGHLIGHT_PATN = re.compile(
-            r'<a name="L-(\d+)"></a>(.*?)(?=<a name="L-(?:\d+)">)', re.DOTALL)
-        source_code = repository.show('%s:%s' % (ref, path))
-        source_code = source_code['data']
-        # TODO try to avoid having highlighted content here
-        hl_source_code = highlight_code(path, source_code)
-        hl_lines = dict(re.findall(HIGHLIGHT_PATN, hl_source_code))
-        return hl_lines
+    #def _blame_src_highlighted_lines(self, ref, path):
+    #    HIGHLIGHT_PATN = re.compile(
+    #        r'<a name="L-(\d+)"></a>(.*?)(?=<a name="L-(?:\d+)">)', re.DOTALL)
+    #    source_code = repository.show('%s:%s' % (ref, path))
+    #    source_code = source_code['data']
+    #    # TODO try to avoid having highlighted content here
+    #    hl_source_code = highlight_code(path, source_code)
+    #    hl_lines = dict(re.findall(HIGHLIGHT_PATN, hl_source_code))
+    #    return hl_lines
     res = text
     res = res.splitlines()
     #hl_lines = _blame_src_highlighted_lines(ref, path)
@@ -222,15 +221,15 @@ def format_blame(text, repository):
         elif line.startswith('summary '):
             _, _, summary = line.partition(' ')
             rev_data[sha]['summary'] = summary.strip()
-            disp_summary = trunc_utf8(
-                summary.encode('utf-8'), 20).decode('utf-8', 'ignore')
-            rev_data[sha]['disp_summary'] = disp_summary
+            #disp_summary = trunc_utf8(
+            #    summary.encode('utf-8'), 20).decode('utf-8', 'ignore')
+            #rev_data[sha]['disp_summary'] = disp_summary
         elif line.startswith('filename'):
             _, _, filename = line.partition(' ')
             rev_data[sha]['filename'] = filename
-            filename = trunc_utf8(
-                filename.strip().encode('utf-8'), 30).decode('utf-8', 'ignore')
-            rev_data[sha]['disp_name'] = filename
+            #filename = trunc_utf8(
+            #    filename.strip().encode('utf-8'), 30).decode('utf-8', 'ignore')
+            #rev_data[sha]['disp_name'] = filename
         elif line.startswith('\t'):
             # Try to get an highlighted line of source code
             code_line = hl_lines.get(str(
@@ -242,12 +241,12 @@ def format_blame(text, repository):
                 rev_data[sha]['author'],
                 rev_data[sha]['email'],
                 rev_data[sha]['time'],
-                rev_data[sha]['disp_summary'],
+                #rev_data[sha]['disp_summary'],
                 rev_data[sha]['summary'],
                 rev_data[sha]['line_no'],
                 rev_data[sha]['old_no'],
                 rev_data[sha]['filename'],
-                rev_data[sha]['disp_name'],
+                #rev_data[sha]['disp_name'],
                 code_line,
             ))
             new_block = True

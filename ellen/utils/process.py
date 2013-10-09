@@ -95,8 +95,7 @@ def jsonize(func):
         elif isinstance(retval, list):
             retval = {"data": retval, "error": 0}
         elif isinstance(retval, dict):
-            if "data" not in retval or
-                    not isinstance(retval["data"], (list, dict)):
+            if "data" not in retval or not isinstance(retval["data"], (list, dict)):
                 retval = {"data": retval, "error": 0}
 
         return json.loads(retval)
