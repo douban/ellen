@@ -4,7 +4,8 @@
 from pygit2 import GIT_REF_OID
 from pygit2 import GIT_REF_SYMBOLIC
 from pygit2 import Signature
-from utils import JagareError
+
+from ellen.utils import JagareError
 
 
 def update_ref(repository, ref, newvalue):

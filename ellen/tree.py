@@ -12,8 +12,8 @@ from pygit2 import GIT_OBJ_TREE
 from pygit2 import GIT_OBJ_COMMIT
 from pygit2 import GIT_SORT_TOPOLOGICAL
 
-from utils import JagareError
-from utils.git import format_commit
+from ellen.utils import JagareError
+from ellen.utils.git import format_commit
 
 TREE_ORDER = {
     'tree': 1,

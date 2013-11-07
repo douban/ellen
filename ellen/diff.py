@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from pygit2 import GIT_OBJ_COMMIT
-from utils.git import _resolve_version
-from utils import JagareError
+
+from ellen.utils import JagareError
+from ellen.utils.git import _resolve_version
 
 
 def diff(repository, ref, from_ref=None, **kwargs):
