@@ -7,6 +7,7 @@ import subprocess
 import json
 import collections
 from functools import wraps
+
 from . import JagareError
 
 GIT_EXECUTABLE = 'git'

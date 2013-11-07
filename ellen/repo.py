@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 from pygit2 import Repository
 from pygit2 import GIT_OBJ_TAG
 from pygit2 import GIT_OBJ_BLOB
@@ -9,27 +10,27 @@ from pygit2 import GIT_OBJ_TREE
 from pygit2 import GIT_OBJ_COMMIT
 from pygit2 import GIT_DIFF_IGNORE_WHITESPACE
 
-from utils import JagareError
-from utils.git import format_blob
-from utils.git import format_tree
-from utils.git import format_commit
-from utils.git import format_tag
-from utils.git import format_blame
-from utils.git import format_diff
-from utils.git import _resolve_version
-from utils.git import _resolve_type
-from utils.process import call, call2, _shlex_split
-from tree import ls_tree
-from rev_list import rev_list
-from rename import detect_renamed
-from tag import list_tags
-from commit import create_commit
-from diff import diff
-from ref import update_ref
-from clone import clone_repository
-from clone import update_server_info
-from init import init_repository
-from archive import archive_repository
+from ellen.utils import JagareError
+from ellen.utils.git import format_blob
+from ellen.utils.git import format_tree
+from ellen.utils.git import format_commit
+from ellen.utils.git import format_tag
+from ellen.utils.git import format_blame
+from ellen.utils.git import format_diff
+from ellen.utils.git import _resolve_version
+from ellen.utils.git import _resolve_type
+from ellen.utils.process import call, call2, _shlex_split
+from ellen.tree import ls_tree
+from ellen.rev_list import rev_list
+from ellen.rename import detect_renamed
+from ellen.tag import list_tags
+from ellen.commit import create_commit
+from ellen.diff import diff
+from ellen.ref import update_ref
+from ellen.clone import clone_repository
+from ellen.clone import update_server_info
+from ellen.init import init_repository
+from ellen.archive import archive_repository
 
 
 class Jagare(object):

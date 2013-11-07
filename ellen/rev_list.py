@@ -4,7 +4,8 @@
 from pygit2 import GIT_OBJ_TAG
 from pygit2 import GIT_SORT_TIME
 from pygit2 import GIT_SORT_TOPOLOGICAL
-from utils.git import format_commit
+
+from ellen.utils.git import format_commit
 
 
 def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
