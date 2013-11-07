@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 from ellen import __version__
 
@@ -36,7 +36,7 @@ setup(
     author_email='xutao@douban.com',
     url='https://github.com/douban/ellen',
     license='BSD',
-    packages=['ellen'],
+    packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     keywords=['git', 'pygit2'],
     zip_safe=False,
     test_suite='nose.collector',
