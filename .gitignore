@@ -2,6 +2,7 @@
 *.py[cod]
 
 # Setuptools distribution folder.
+src
 dist
 build
 

@@ -12,12 +12,8 @@ except ImportError:
 with open('README.md') as long_description_file:
     long_description = long_description_file.read()
 
-dependency_links = [
-    'git+https://github.com/douban/pygit2.git@0674872bfe99c9fcf3dfca5a7ac8ecfc2af8bff9#egg=pygit2'
-]
-
 install_requires = [
-    'pygit2',
+    'pygit2==douban',
     'python-magic==0.4.3',
     'gevent',
 ]
@@ -26,6 +22,10 @@ tests_require = [
     'nose',
 ] + install_requires
 
+dependency_links = [
+    'git+http://code.dapps.douban.com/pygit2.git@0674872bfe99c9fcf3dfca5a7ac8ecfc2af8bff9#egg=pygit2-douban',
+    # 'git+https://github.com/douban/pygit2.git@0674872bfe99c9fcf3dfca5a7ac8ecfc2af8bff9#egg=pygit2-douban',
+]
 
 setup(
     name='ellen',
