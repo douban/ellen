@@ -23,7 +23,8 @@ tests_require = [
 ] + install_requires
 
 dependency_links = [
-    'git+https://github.com/douban/pygit2.git@0674872bfe99c9fcf3dfca5a7ac8ecfc2af8bff9#egg=pygit2-douban'
+    'git+http://code.dapps.douban.com/pygit2.git@0674872bfe99c9fcf3dfca5a7ac8ecfc2af8bff9#egg=pygit2-douban',
+    # 'git+https://github.com/douban/pygit2.git@0674872bfe99c9fcf3dfca5a7ac8ecfc2af8bff9#egg=pygit2-douban',
 ]
 
 setup(
