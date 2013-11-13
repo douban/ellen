@@ -187,23 +187,11 @@ class Jagare(object):
         init_repository(path, work_path=work_path, bare=bare)
         return cls(path)
 
-    def revparse_single(self, *w, **kw):
-        try:
-            return super(GitRepository, self).revparse_single(*w, **kw)
-        except (KeyError, ValueError):
-            raise JagareError("rev not found.")
-
     def listall_references(self):
         return self.repository.listall_references()
 
     def lookup_reference(self, *w, **kw):
         return self.repository.lookup_reference(*w, **kw)
-
-    def read(self, *w, **kw):
-        try:
-            return super(GitRepository, self).read(*w, **kw)
-        except ValueError:
-            raise JagareError("sha not found")
 
     def add_remote(self, name, url):
         self.repository.create_remote(name, url)
