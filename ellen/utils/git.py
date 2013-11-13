@@ -301,24 +301,3 @@ def _format_hunks(hunks):
             }
         _hunks.append(wrapped_hunk)
     return _hunks
-
-
-class GitRepository(Repository):
-
-    def revparse_single(self, *w, **kw):
-        try:
-            return super(GitRepository, self).revparse_single(*w, **kw)
-        except (KeyError, ValueError):
-            raise JagareError("rev not found.", 400)
-
-    def lookup_reference(self, *w, **kw):
-        try:
-            return super(GitRepository, self).lookup_reference(*w, **kw)
-        except ValueError:
-            raise JagareError("reference not found.", 400)
-
-    def read(self, *w, **kw):
-        try:
-            return super(GitRepository, self).read(*w, **kw)
-        except ValueError:
-            raise JagareError("sha not found", 400)

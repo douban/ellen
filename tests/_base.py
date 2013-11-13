@@ -3,8 +3,6 @@
 import os
 import shutil
 import tempfile
-from pygit2 import init_repository
-from pygit2 import Repository
 
 UNINIT_REPO_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
