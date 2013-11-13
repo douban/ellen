@@ -259,6 +259,21 @@ class Jagare(object):
         if branch:
             branch.delete()
 
+    @property
+    def head(self):
+        if self.repository.is_empty:
+            return None
+        return self.repository.head
+
+    def update_head(self, name):
+        branch = self.repository.lookup_branch(name)
+        if not branch:
+            return None
+        head = self.repository.lookup_reference("HEAD")
+        if not head:
+            return None
+        head.target = branch.name
+
 
 def repository(path):
     try:
