@@ -13,9 +13,8 @@ with open('README.md') as long_description_file:
     long_description = long_description_file.read()
 
 install_requires = [
-    'pygit2==douban',
-    'python-magic==0.4.3',
-    'gevent',
+    'pygit2 == douban',
+    'python-magic >= 0.4.3',
 ]
 
 tests_require = [
