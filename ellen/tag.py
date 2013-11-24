@@ -9,6 +9,7 @@ from ellen.utils.git import format_lw_tag
 
 
 def list_tags(repository, name_only=None):
+    """git tag command, pygit2 wrapper"""
     tags = []
     refs = repository.listall_references()
     for ref in refs:

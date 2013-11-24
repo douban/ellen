@@ -4,7 +4,9 @@
 from pygit2 import GIT_DIFF_REVERSE
 
 
+# TODO: move to diff or util
 def detect_renamed(repository, ref, path=None):
+    """Find renamed files in the commit diff."""
     commit = repository.revparse_single(ref)
     parents = commit.parents
     if len(parents) == 0:

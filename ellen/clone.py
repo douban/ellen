@@ -8,6 +8,7 @@ from ellen.utils.process import GIT_EXECUTABLE
 
 def clone_repository(url, path, bare=None, checkout_branch=None, mirror=None,
                      env=None):
+    """git clone command"""
     cmd = [GIT_EXECUTABLE, 'clone']
     if checkout_branch:
         cmd.append('-b')
