@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utils.process import call2
-from utils.process import GIT_EXECUTABLE
+from ellen.utils.process import call2
+from ellen.utils.process import GIT_EXECUTABLE
 
 
 def archive_repository(path, prefix, ref='master'):

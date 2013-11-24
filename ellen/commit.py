@@ -9,8 +9,9 @@ from pygit2 import GIT_FILEMODE_LINK
 from pygit2 import GIT_FILEMODE_COMMIT
 from pygit2 import Signature
 from pygit2 import hash
-from tree_node import init_root
-from utils import JagareError
+
+from ellen.tree_node import init_root
+from ellen.utils import JagareError
 
 
 def create_commit(repository, branch, parent,

@@ -24,6 +24,8 @@ from pygit2 import GIT_OBJ_BLOB
 from pygit2 import GIT_OBJ_TREE
 from pygit2 import GIT_OBJ_COMMIT
 
+# from .text import highlight_code # no use yet
+from .text import trunc_utf8
 from . import JagareError
 from .mdiff import mdiff2
 
@@ -221,15 +223,15 @@ def format_blame(text, repository):
         elif line.startswith('summary '):
             _, _, summary = line.partition(' ')
             rev_data[sha]['summary'] = summary.strip()
-            #disp_summary = trunc_utf8(
-            #    summary.encode('utf-8'), 20).decode('utf-8', 'ignore')
-            #rev_data[sha]['disp_summary'] = disp_summary
+            disp_summary = trunc_utf8(
+                summary.encode('utf-8'), 20).decode('utf-8', 'ignore')
+            rev_data[sha]['disp_summary'] = disp_summary
         elif line.startswith('filename'):
             _, _, filename = line.partition(' ')
             rev_data[sha]['filename'] = filename
-            #filename = trunc_utf8(
-            #    filename.strip().encode('utf-8'), 30).decode('utf-8', 'ignore')
-            #rev_data[sha]['disp_name'] = filename
+            filename = trunc_utf8(
+                filename.strip().encode('utf-8'), 30).decode('utf-8', 'ignore')
+            rev_data[sha]['disp_name'] = filename
         elif line.startswith('\t'):
             # Try to get an highlighted line of source code
             code_line = hl_lines.get(str(
@@ -241,12 +243,12 @@ def format_blame(text, repository):
                 rev_data[sha]['author'],
                 rev_data[sha]['email'],
                 rev_data[sha]['time'],
-                #rev_data[sha]['disp_summary'],
+                rev_data[sha]['disp_summary'],
                 rev_data[sha]['summary'],
                 rev_data[sha]['line_no'],
                 rev_data[sha]['old_no'],
                 rev_data[sha]['filename'],
-                #rev_data[sha]['disp_name'],
+                rev_data[sha]['disp_name'],
                 code_line,
             ))
             new_block = True
@@ -299,24 +301,3 @@ def _format_hunks(hunks):
             }
         _hunks.append(wrapped_hunk)
     return _hunks
-
-
-class GitRepository(Repository):
-
-    def revparse_single(self, *w, **kw):
-        try:
-            return super(GitRepository, self).revparse_single(*w, **kw)
-        except (KeyError, ValueError):
-            raise JagareError("rev not found.", 400)
-
-    def lookup_reference(self, *w, **kw):
-        try:
-            return super(GitRepository, self).lookup_reference(*w, **kw)
-        except ValueError:
-            raise JagareError("reference not found.", 400)
-
-    def read(self, *w, **kw):
-        try:
-            return super(GitRepository, self).read(*w, **kw)
-        except ValueError:
-            raise JagareError("sha not found", 400)
