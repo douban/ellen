@@ -9,7 +9,7 @@ from pygit2 import GIT_FILEMODE_COMMIT
 from pygit2 import GIT_FILEMODE_BLOB_EXECUTABLE
 
 
-# no use yet
+# used in ellen.commit
 class TreeNode(object):
 
     def __init__(self, parent, path, type, action='insert'):
