@@ -6,6 +6,7 @@ from ellen.utils.process import call2
 from ellen.utils.process import GIT_EXECUTABLE
 
 
+# why not use pygit2.clone_repository ?
 def clone_repository(url, path, bare=None, checkout_branch=None, mirror=None,
                      env=None):
     """git clone command"""

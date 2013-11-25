@@ -79,7 +79,8 @@ class Jagare(object):
         elif obj_type == GIT_OBJ_BLOB:
             return format_blob(ref, obj, self.repository)
 
-    def ls_tree(self, ref, path=None, recursive=False, size=None, with_commit=False):
+    def ls_tree(self, ref, path=None, recursive=False, size=None,
+                with_commit=False):
         return ls_tree(self.repository, ref, req_path=path,
                        recursive=recursive, size=size, with_commit=with_commit)
 
@@ -105,7 +106,8 @@ class Jagare(object):
 
     def format_patch(self, ref, from_ref=None):
         if from_ref:
-            result = call(self.repository, 'format-patch --stdout %s...%s' % (from_ref, ref))
+            result = call(self.repository,
+                          'format-patch --stdout %s...%s' % (from_ref, ref))
         else:
             result = call(self.repository, 'format-patch -1 --stdout %s' % ref)
         return result['stdout']
@@ -205,6 +207,7 @@ class Jagare(object):
     def merge_base(self, to_sha, from_sha):
         return self.repository.merge_base(to_sha, from_sha)
 
+    # change to property ?
     def remotes(self):
         return self.repository.remotes
 
@@ -220,7 +223,8 @@ class Jagare(object):
         if target:
             target.fetch()
 
-    def merge(self, ref, msg='automerge', commit_msg='', no_ff=False, _raise=True, _env=None):
+    def merge(self, ref, msg='automerge', commit_msg='',
+              no_ff=False, _raise=True, _env=None):
         cmd = ['merge', ref]
         if msg:
             cmd.append('-m')
