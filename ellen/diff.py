@@ -8,6 +8,7 @@ from ellen.utils.git import _resolve_version
 
 
 def diff(repository, ref, from_ref=None, **kwargs):
+    """git diff command, pygit2 wrapper"""
     # TODO: add merge_base support
     _diff = {}
     ref = ref.strip()

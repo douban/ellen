@@ -9,6 +9,12 @@ from ellen.utils import JagareError
 
 
 def update_ref(repository, ref, newvalue):
+    """git update-ref/symbolic-ref command, pygit2 wrapper.
+
+    :params ref: the full name of the reference/symbolic ref.
+    :params newvalue: the sha-1 value of the commit
+                      or the full name of the target reference.
+    """
     # TODO: support for no-deref option
     # git update-ref
     if repository.is_empty:
@@ -31,7 +37,8 @@ def update_ref(repository, ref, newvalue):
         try:
             repo_ref.target = commit.hex
         except OSError:
-            raise JagareError("OSError occurred because of concurrency, try again later")
+            raise JagareError("OSError occurred because of concurrency,"
+                              " try again later")
 
     # TODO: change acting when the reference is symbolic
     elif repo_ref.type == GIT_REF_SYMBOLIC:
