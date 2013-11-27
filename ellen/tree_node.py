@@ -9,6 +9,7 @@ from pygit2 import GIT_FILEMODE_COMMIT
 from pygit2 import GIT_FILEMODE_BLOB_EXECUTABLE
 
 
+# used in ellen.commit
 class TreeNode(object):
 
     def __init__(self, parent, path, type, action='insert'):
@@ -181,6 +182,7 @@ def init_root():
     return TreeNode(None, '', 'tree')
 
 
+# TODO: move to tests...?
 def test_node():
     root = TreeNode(None, '', 'tree')
     node = root.add_file('/tt/tt/tt1/t.txt')

@@ -10,6 +10,8 @@ from ellen.utils.git import format_commit
 
 def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
              max_count=0, author=None, query=None, first_parent=None):
+    """git rev-list command, pygit2 wrapper.
+    But this returns a commit list"""
 
     if repository.is_empty:
         return []

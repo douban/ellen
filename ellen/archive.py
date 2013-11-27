@@ -6,6 +6,7 @@ from ellen.utils.process import GIT_EXECUTABLE
 
 
 def archive_repository(path, prefix, ref='master'):
+    """git archive command"""
     cmd = [GIT_EXECUTABLE, '--git-dir', path, 'archive']
     cmd.append('--prefix=%s/' % prefix)
     cmd.append(ref)
