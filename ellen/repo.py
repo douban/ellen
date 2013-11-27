@@ -40,6 +40,9 @@ class Jagare(object):
         self.repository = repository(path)
         self.repository_name = None
 
+    def __eq__(self, other):
+        return self.repository.path == other.repository.path
+
     @property
     def empty(self):
         return self.repository.is_empty

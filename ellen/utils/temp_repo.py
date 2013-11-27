@@ -22,3 +22,5 @@ def create_temp_repo(path, is_bare=True):
                      message='first commit',
                      reflog='commit one file',
                      data=data)
+
+    return repo
