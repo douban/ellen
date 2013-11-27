@@ -5,7 +5,7 @@ from ellen.utils.process import call2
 from ellen.utils.process import GIT_EXECUTABLE
 
 
-# why not use pygit2.init_repository ?
+# FIXME: 比较 `git init` 跟 `pygit2.init_repository`
 def init_repository(path, work_path=None, bare=None):
     """git init command"""
     if bare:
