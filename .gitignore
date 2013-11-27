@@ -12,3 +12,6 @@ build
 
 # Editor
 *.sw[po]
+
+# others
+tmp
