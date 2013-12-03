@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# FIXME: remove gevent
 import gevent
 import urlparse
 from StringIO import StringIO
