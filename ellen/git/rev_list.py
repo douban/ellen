@@ -9,7 +9,8 @@ from ellen.utils.git import format_commit
 
 
 def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
-             max_count=0, author=None, query=None, first_parent=None):
+             max_count=0, author=None, query=None, first_parent=None,
+             since=0):
     """git rev-list command, pygit2 wrapper.
     But this returns a commit list"""
 
@@ -42,7 +43,8 @@ def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
     for c in walker:
         if all([_check_author(c, author),
                 _check_file_change(c, path),
-                _check_message(c, query)]):
+                _check_message(c, query),
+                _check_date(c, since)]):
             index = c.hex
             if first_parent:
                 if next_commit and next_commit.hex != c.hex:
@@ -70,6 +72,14 @@ def _check_author(commit, author):
     elif author and commit.author.email == author:
         return True
     elif not author:
+        return True
+    return False
+
+
+def _check_date(commit, since):
+    if since and commit.committer.time > since:
+        return True
+    elif not since:
         return True
     return False
 
