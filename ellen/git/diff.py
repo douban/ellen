@@ -2,9 +2,44 @@
 # -*- coding: utf-8 -*-
 
 from pygit2 import GIT_OBJ_COMMIT
+from pygit2 import GIT_DIFF_IGNORE_WHITESPACE
 
 from ellen.utils import JagareError
 from ellen.utils.git import _resolve_version
+from ellen.utils.git import format_diff
+
+
+def diff_wrapper(repository, *w, **kw):
+    ''' Jagare's diff wrapper '''
+    try:
+        kws = {}
+        ignore_space = kw.get('ignore_space', None)
+        if ignore_space:
+            flags = kw.get('flags', 0)
+            flags |= GIT_DIFF_IGNORE_WHITESPACE
+            kws.update({'flags': flags})
+        from_ref = kw.get('from_ref', None)
+        if from_ref:
+            kws.update({'from_ref': from_ref})
+        context_lines = kw.get('context_lines', None)
+        if context_lines:
+            kws.update({'context_lines': context_lines})
+        path = kw.get('path', None)
+        paths = kw.get('paths', None)
+        if path:
+            kws.update({'paths': [path]})
+        if paths:
+            kws.update({'paths': paths})
+        # call diff
+        d = diff(repository, *w, **kws)
+        rename_detection = kw.get('rename_detection', None)
+        if rename_detection:
+            d['diff'].find_similar()
+            #d.find_similar()
+        # return formated diff dict
+        return format_diff(d)
+    except JagareError:
+        return []
 
 
 def diff(repository, ref, from_ref=None, **kwargs):

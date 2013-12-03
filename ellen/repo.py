@@ -8,29 +8,29 @@ from pygit2 import GIT_OBJ_TAG
 from pygit2 import GIT_OBJ_BLOB
 from pygit2 import GIT_OBJ_TREE
 from pygit2 import GIT_OBJ_COMMIT
-from pygit2 import GIT_DIFF_IGNORE_WHITESPACE
 
 from ellen.utils import JagareError
 from ellen.utils.git import format_blob
 from ellen.utils.git import format_tree
 from ellen.utils.git import format_commit
 from ellen.utils.git import format_tag
-from ellen.utils.git import format_blame
-from ellen.utils.git import format_diff
 from ellen.utils.git import _resolve_version
 from ellen.utils.git import _resolve_type
-from ellen.utils.process import call, call2, _shlex_split
-from ellen.tree import ls_tree
-from ellen.rev_list import rev_list
-from ellen.rename import detect_renamed
-from ellen.tag import list_tags
-from ellen.commit import create_commit
-from ellen.diff import diff
-from ellen.ref import update_ref
-from ellen.clone import clone_repository
-from ellen.clone import update_server_info
-from ellen.init import init_repository
-from ellen.archive import archive_repository
+from ellen.git.tree import ls_tree
+from ellen.git.rev_list import rev_list
+from ellen.git.rename import detect_renamed
+from ellen.git.tag import list_tags
+from ellen.git.commit import create_commit
+from ellen.git.diff import diff_wrapper as diff
+from ellen.git.ref import update_ref
+from ellen.git.clone import clone_repository
+from ellen.git.clone import update_server_info
+from ellen.git.init import init_repository
+from ellen.git.archive import archive_repository
+from ellen.git.blame import blame
+from ellen.git.format_patch import format_patch
+from ellen.git.merge import merge
+from ellen.git.push import push
 
 
 class Jagare(object):
@@ -50,6 +50,12 @@ class Jagare(object):
     @property
     def bare(self):
         return self.repository.is_bare
+
+    @property
+    def head(self):
+        if self.repository.is_empty:
+            return None
+        return self.repository.head
 
     @property
     def branches(self):
@@ -73,6 +79,7 @@ class Jagare(object):
             return {}
         obj_type = obj.type
 
+        # TODO: formatter
         if obj_type == GIT_OBJ_COMMIT:
             return format_commit(ref, obj, self.repository)
         elif obj_type == GIT_OBJ_TAG:
@@ -97,23 +104,11 @@ class Jagare(object):
         return commits
 
     def blame(self, ref, path, lineno=None):
-        if lineno:
-            result = call(self.repository,
-                          'blame -L %s,%s --porcelain %s -- %s' % (
-                              lineno, lineno, ref, path))
-        else:
-            result = call(self.repository,
-                          'blame -p -CM %s -- %s' % (ref, path))
-        result = format_blame(result['stdout'], self.repository)
+        result = blame(self.repository, ref, path, lineno)
         return self.show(ref), result
 
     def format_patch(self, ref, from_ref=None):
-        if from_ref:
-            result = call(self.repository,
-                          'format-patch --stdout %s...%s' % (from_ref, ref))
-        else:
-            result = call(self.repository, 'format-patch -1 --stdout %s' % ref)
-        return result['stdout']
+        return format_patch(self.repository, ref, from_ref)
 
     def detect_renamed(self, ref, path=None):
         return detect_renamed(self.repository, ref)
@@ -122,36 +117,7 @@ class Jagare(object):
         return create_commit(self.repository, *w, **kw)
 
     def diff(self, *w, **kw):
-        ''' Jagare's diff wrapper '''
-        try:
-            kws = {}
-            ignore_space = kw.get('ignore_space', None)
-            if ignore_space:
-                flags = kw.get('flags', 0)
-                flags |= GIT_DIFF_IGNORE_WHITESPACE
-                kws.update({'flags': flags})
-            from_ref = kw.get('from_ref', None)
-            if from_ref:
-                kws.update({'from_ref': from_ref})
-            context_lines = kw.get('context_lines', None)
-            if context_lines:
-                kws.update({'context_lines': context_lines})
-            path = kw.get('path', None)
-            paths = kw.get('paths', None)
-            if path:
-                kws.update({'paths': [path]})
-            if paths:
-                kws.update({'paths': paths})
-            # call diff
-            d = diff(self.repository, *w, **kws)
-            rename_detection = kw.get('rename_detection', None)
-            if rename_detection:
-                d['diff'].find_similar()
-                #d.find_similar()
-            # return formated diff dict
-            return format_diff(d)
-        except JagareError:
-            return []
+        return diff(self.repository, *w, **kw)
 
     def resolve_commit(self, version):
         version = version.strip()
@@ -161,9 +127,11 @@ class Jagare(object):
         version = version.strip()
         return _resolve_type(self.repository, version)
 
-    def clone(self, path, bare=None, branch=None, mirror=None, env=None):
+    @classmethod
+    def _clone(cls, url, path, bare=None, branch=None, mirror=None,
+               env=None):
         # TODO: check clone result
-        clone_repository(self.repository.path, path,
+        clone_repository(url, path,
                          bare=bare, checkout_branch=branch,
                          mirror=mirror, env=env)
         jagare = Jagare(path)
@@ -171,22 +139,21 @@ class Jagare(object):
             update_server_info(jagare.repository)
         return jagare
 
+    def clone(self, path, bare=None, branch=None, mirror=None, env=None):
+        return self._clone(self.repository.path, path,
+                           bare=bare, branch=branch,
+                           mirror=mirror, env=env)
+
     @classmethod
     def mirror(cls, url, path, bare=None, branch=None, env=None):
-        # TODO: check clone result
-        clone_repository(url, path,
-                         bare=bare, checkout_branch=branch,
-                         mirror=True, env=env)
-        jagare = Jagare(path)
-        if bare:
-            update_server_info(jagare.repository)
-        return jagare
+        return cls._clone(url, path,
+                          bare=bare, branch=branch,
+                          mirror=True, env=env)
 
     @classmethod
     def init(cls, path, work_path=None, bare=None):
         # TODO: move to libs
         # if parent dir not exist, create it.
-        # else git init will fail
         if not os.path.exists(path):
             os.makedirs(path)
         init_repository(path, work_path=work_path, bare=bare)
@@ -204,6 +171,12 @@ class Jagare(object):
     def update_ref(self, ref, newvalue):
         return update_ref(self.repository, ref, newvalue)
 
+    def update_head(self, branch_name):
+        branch = self.repository.lookup_branch(branch_name)
+        if not branch:
+            return None
+        self.update_ref('HEAD', branch.name)
+
     def sha(self, rev='HEAD'):
         return _resolve_version(self.repository, rev)
 
@@ -219,31 +192,17 @@ class Jagare(object):
             remote.fetch()
 
     def fetch(self, name):
-        target = ''
-        for remote in self.remotes():
-            if remote.name == name:
-                target = remote
+        target = {remote.name: remote for remote in self.remotes()}.get(name)
         if target:
             target.fetch()
 
     def merge(self, ref, msg='automerge', commit_msg='',
               no_ff=False, _raise=True, _env=None):
-        cmd = ['merge', ref]
-        if msg:
-            cmd.append('-m')
-            cmd.append(msg)
-        if commit_msg:
-            cmd.append('-m')
-            cmd.append(commit_msg)
-        if no_ff:
-            cmd.append('--no-ff')
-        errcode = call(self.repository, cmd, env=_env)
-        return errcode
+        return merge(self.repository, ref, msg, commit_msg,
+                     no_ff, _raise, _env)
 
     def push(self, remote, ref):
-        cmd = ['push', remote, ref]
-        errcode = call(self.repository, cmd)
-        return errcode
+        return push(self.repository, remote, ref)
 
     def archive(self, prefix):
         result = archive_repository(self.repository.path, prefix)
@@ -253,21 +212,6 @@ class Jagare(object):
         branch = self.repository.lookup_branch(name)
         if branch:
             branch.delete()
-
-    @property
-    def head(self):
-        if self.repository.is_empty:
-            return None
-        return self.repository.head
-
-    def update_head(self, name):
-        branch = self.repository.lookup_branch(name)
-        if not branch:
-            return None
-        head = self.repository.lookup_reference("HEAD")
-        if not head:
-            return None
-        head.target = branch.name
 
 
 def repository(path):
