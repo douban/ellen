@@ -10,7 +10,7 @@ from pygit2 import GIT_FILEMODE_COMMIT
 from pygit2 import Signature
 from pygit2 import hash
 
-from ellen.tree_node import init_root
+from ellen.git.tree_node import init_root
 from ellen.utils import JagareError
 
 
