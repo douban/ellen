@@ -10,8 +10,8 @@ from pygit2 import GIT_FILEMODE_COMMIT
 from pygit2 import Signature
 from pygit2 import hash
 
-from ellen.git.tree_node import init_root
 from ellen.utils import JagareError
+from ellen.utils.tree_node import init_root
 
 
 def create_commit(repository, branch, parent,
