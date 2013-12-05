@@ -11,8 +11,8 @@ from ellen.utils import JagareError
 def update_ref(repository, ref, newvalue):
     """git update-ref/symbolic-ref command, pygit2 wrapper.
 
-    :params ref: the full name of the reference/symbolic ref.
-    :params newvalue: the sha-1 value of the commit
+    :param ref: the full name of the reference/symbolic ref.
+    :param newvalue: the sha-1 value of the commit
                       or the full name of the target reference.
     """
     # TODO: support for no-deref option

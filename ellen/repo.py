@@ -41,7 +41,22 @@ class Jagare(object):
         self.repository_name = None
 
     def __eq__(self, other):
-        return self.repository.path == other.repository.path
+        if isinstance(other, Jagare):
+            return self.path == other.path
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.path)
+
+    def __repr__(self):
+        return '%s(%r)' % (type(self).__name__, self.path)
+
+    @property
+    def path(self):
+        return self.repository.path
 
     @property
     def empty(self):
@@ -64,6 +79,10 @@ class Jagare(object):
     @property
     def tags(self):
         return self.list_tags(name_only=True)
+
+    # TODO: change to property
+    def remotes(self):
+        return self.repository.remotes
 
     def list_tags(self, *w, **kw):
         return list_tags(self.repository, *w, **kw)
@@ -182,10 +201,6 @@ class Jagare(object):
 
     def merge_base(self, to_sha, from_sha):
         return self.repository.merge_base(to_sha, from_sha)
-
-    # change to property ?
-    def remotes(self):
-        return self.repository.remotes
 
     def fetch_all(self):
         for remote in self.remotes():
