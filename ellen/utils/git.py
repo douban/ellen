@@ -138,7 +138,7 @@ def format_blob(sha, blob, repository):
     d['type'] = 'blob'
     d['data'] = blob.data
     d['size'] = blob.size
-    d['binary'] = blob.binary and 'text' not in magic.from_buffer(blob.data, mime=True)
+    d['binary'] = blob.is_binary and 'text' not in magic.from_buffer(blob.data, mime=True)
     return d
 
 
@@ -279,7 +279,7 @@ def format_diff(diff):
             'old_oid': patch.old_oid,
             'new_oid': patch.new_oid,
             'status': patch.status,
-            'binary': patch.binary,
+            'binary': patch.is_binary,
             'old_file_path': patch.old_file_path,
             'new_file_path': patch.new_file_path,
         })

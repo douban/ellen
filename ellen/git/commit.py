@@ -59,7 +59,7 @@ def create_commit(repository, branch, parent,
                                           tree_oid, parents_sha)
         master = repository.lookup_reference("refs/heads/%s" % branch)
         master.target = commit.hex
-        master.append_log(signature, reflog)
+        master.log_append(commit.hex, signature, reflog)
         return ret
     return []
 
