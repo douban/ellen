@@ -23,8 +23,7 @@ from ellen.git.tag import list_tags
 from ellen.git.commit import create_commit
 from ellen.git.diff import diff_wrapper as diff
 from ellen.git.ref import update_ref
-from ellen.git.clone import clone_repository
-from ellen.git.clone import update_server_info
+from ellen.git.clone import clone_repository, update_server_info
 from ellen.git.init import init_repository
 from ellen.git.archive import archive_repository
 from ellen.git.blame import blame
@@ -41,7 +40,22 @@ class Jagare(object):
         self.repository_name = None
 
     def __eq__(self, other):
-        return self.repository.path == other.repository.path
+        if isinstance(other, Jagare):
+            return self.path == other.path
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.path)
+
+    def __repr__(self):
+        return '%s(%r)' % (type(self).__name__, self.path)
+
+    @property
+    def path(self):
+        return self.repository.path
 
     @property
     def empty(self):
@@ -64,6 +78,10 @@ class Jagare(object):
     @property
     def tags(self):
         return self.list_tags(name_only=True)
+
+    # TODO: change to property
+    def remotes(self):
+        return self.repository.remotes
 
     def list_tags(self, *w, **kw):
         return list_tags(self.repository, *w, **kw)
@@ -127,6 +145,8 @@ class Jagare(object):
         version = version.strip()
         return _resolve_type(self.repository, version)
 
+    # TODO: cls.clone_from
+
     @classmethod
     def _clone(cls, url, path, bare=None, branch=None, mirror=None,
                env=None):
@@ -182,10 +202,6 @@ class Jagare(object):
 
     def merge_base(self, to_sha, from_sha):
         return self.repository.merge_base(to_sha, from_sha)
-
-    # change to property ?
-    def remotes(self):
-        return self.repository.remotes
 
     def fetch_all(self):
         for remote in self.remotes():
