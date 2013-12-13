@@ -23,8 +23,7 @@ from ellen.git.tag import list_tags
 from ellen.git.commit import create_commit
 from ellen.git.diff import diff_wrapper as diff
 from ellen.git.ref import update_ref
-from ellen.git.clone import clone_repository
-from ellen.git.clone import update_server_info
+from ellen.git.clone import clone_repository, update_server_info
 from ellen.git.init import init_repository
 from ellen.git.archive import archive_repository
 from ellen.git.blame import blame
@@ -145,6 +144,8 @@ class Jagare(object):
     def resolve_type(self, version):
         version = version.strip()
         return _resolve_type(self.repository, version)
+
+    # TODO: cls.clone_from
 
     @classmethod
     def _clone(cls, url, path, bare=None, branch=None, mirror=None,
