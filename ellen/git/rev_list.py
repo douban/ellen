@@ -10,7 +10,7 @@ from ellen.utils.git import format_commit
 
 def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
              max_count=0, author=None, query=None, first_parent=None,
-             since=0):
+             since=0, no_merges=None):
     """git rev-list command, pygit2 wrapper.
     But this returns a commit list"""
 
@@ -44,7 +44,8 @@ def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
         if all([_check_author(c, author),
                 _check_file_change(c, path),
                 _check_message(c, query),
-                _check_date(c, since)]):
+                _check_date(c, since),
+                _check_no_merges(c, no_merges)]):
             index = c.hex
             if first_parent:
                 if next_commit and next_commit.hex != c.hex:
@@ -80,6 +81,14 @@ def _check_date(commit, since):
     if since and commit.committer.time > since:
         return True
     elif not since:
+        return True
+    return False
+
+
+def _check_no_merges(commit, no_merges):
+    if no_merges and len(commit.parents) <= 1:
+        return True
+    elif not no_merges:
         return True
     return False
 
