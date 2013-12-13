@@ -10,7 +10,7 @@ UNINIT_REPO_PATH = os.path.join(
 BARE_REPO_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "data", "bare_repo1")
-BARE_REPO_BRANCH = ('chinese', 'master')
+BARE_REPO_BRANCHES = ['chinese', 'master']
 BARE_REPO_TAG = ()
 
 

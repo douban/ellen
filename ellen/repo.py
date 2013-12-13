@@ -73,6 +73,7 @@ class Jagare(object):
 
     @property
     def branches(self):
+        """return a list of branch names"""
         return self.list_branches()
 
     @property
