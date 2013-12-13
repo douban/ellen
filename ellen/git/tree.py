@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# FIXME: remove gevent
-import gevent
 import urlparse
 from StringIO import StringIO
 
@@ -226,9 +224,10 @@ def _format_with_last_commit(repository, ret_tree, to_commit):
     ret = {}
 
     for commit in walker:
-        spawns = [gevent.spawn(_calc_is_changed, commit, path, ret)
-                  for path in paths]
-        gevent.joinall(spawns)
+
+        for path in paths:
+            _calc_is_changed(commit, path, ret)
+
         if not ret:
             continue
         fc = format_commit(commit.hex, commit, None)
