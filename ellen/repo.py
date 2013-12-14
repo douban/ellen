@@ -201,8 +201,8 @@ class Jagare(object):
         return merge(self.repository, ref, msg, commit_msg,
                      no_ff, _raise, _env)
 
-    def push(self, remote, ref):
-        return push(self.repository, remote, ref)
+    def push(self, remote, ref, _env=None):
+        return push(self.repository, remote, ref, _env=_env)
 
     def archive(self, prefix):
         result = archive_repository(self.repository.path, prefix)
