@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from _base import BareRepoTest
-from _base import BARE_REPO_BRANCH
+from _base import BARE_REPO_BRANCHES
 from ellen.repo import Jagare
 
 
@@ -10,7 +10,7 @@ class test_branch(BareRepoTest):
     def test_simple(self):
         repo = Jagare(self.path)
         branches = repo.branches
-        assert branches == BARE_REPO_BRANCH
+        assert branches == BARE_REPO_BRANCHES
 
     def test_delete(self):
         repo = Jagare(self.path)
