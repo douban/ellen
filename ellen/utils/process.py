@@ -53,28 +53,37 @@ class Process(object):
     def __call__(self, *a, **kw):
         proc = self.bake()
         env = kw.pop('env', {})
+        proc._parse_args(*a, **kw)
+        return proc.call(env=env)
 
+    def _parse_args(self, *a, **kw):
+        cmds = []
         for k, v in kw.iteritems():
             if len(k) == 1:
                 k = '-' + k
             else:
                 k = '--' + k
-            if isinstance(v, bool) and v is True:
-                proc.cmds.append(k)
+            if not v:  # v in (None, '', False)
+                continue
+            elif isinstance(v, bool):  # v is True
+                cmds.append(k)
+            elif isinstance(v, str):
+                cmds.append(k)
+                cmds.append(v)
             else:
-                proc.cmds.append(k)
-                proc.cmds.append(v)
+                raise KeyError
 
         for p in a:
-            proc.cmds.append(p)
+            if not isinstance(p, str):
+                raise KeyError
+            cmds.append(p)
+        self.cmds += cmds
 
-        return proc.call(env=env)
-
-    def bake(self, cmd=None):
+    def bake(self, *a, **kw):
         cmds = list(self.cmds)
-        if cmd:
-            cmds.append(cmd)
-        return Process(cmds)
+        proc = Process(cmds)
+        proc._parse_args(*a, **kw)
+        return proc
 
     def call(self, cmdstr='', env=None):
         extra_cmds = _shlex_split(cmdstr)
@@ -85,14 +94,25 @@ process = Process()
 git = process.bake('git')
 
 
+def git_with_repo(repository):
+    git_dir = repository.path
+    baked = git.bake('--git-dir', git_dir)
+    work_tree = repository.workdir
+    if work_tree:
+        baked = baked.bake('--work-tree', work_tree)
+    return baked
+
+
 # TODO: remove repository.
 def call(repository, cmd, env=None):
     cmd = _shlex_split(cmd)
+
     git_dir = repository.path.rstrip('/')
     work_dir = '/'.join(git_dir.split('/')[:-1])
     add2cmd = ['--git-dir', git_dir]
     if not repository.is_bare:
         add2cmd += ['--work-tree', work_dir]
+
     return _call([GIT_EXECUTABLE] + add2cmd + cmd, env=env)
 
 
