@@ -4,7 +4,6 @@
 import shlex
 import logging
 import subprocess
-import collections
 
 GIT_EXECUTABLE = 'git'
 GIT_DIR_DEFAULT = '.git'
@@ -120,27 +119,3 @@ def call(repository, cmd, env=None):
         add2cmd += ['--work-tree', work_dir]
 
     return _call([GIT_EXECUTABLE] + add2cmd + cmd, env=env)
-
-
-# TODO: use call instead
-def call2(*args, **kwargs):
-    """System calls with string or list args"""
-    env = kwargs.pop('env', {})
-    assert not kwargs, "call kwargs not understood in %s" % kwargs
-    fullcmd = []
-    if len(args) == 1:
-        cmd = args[0]
-    else:
-        cmd = args
-    cmd = _shlex_split(cmd)
-    # flatten
-    fullcmd = []
-    for el in cmd:
-        if isinstance(el, basestring):
-            fullcmd.append(el)
-        elif isinstance(el, collections.Iterable):
-            fullcmd.extend(el)
-        else:
-            fullcmd.append(str(el))
-    assert len(fullcmd) >= 1, "Need to pass at least a command"
-    return _call(fullcmd, env=env)
