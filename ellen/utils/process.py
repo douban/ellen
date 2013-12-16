@@ -4,11 +4,7 @@
 import shlex
 import logging
 import subprocess
-import json
 import collections
-from functools import wraps
-
-from . import JagareError
 
 GIT_EXECUTABLE = 'git'
 GIT_DIR_DEFAULT = '.git'
@@ -80,24 +76,3 @@ def call2(*args, **kwargs):
             fullcmd.append(str(el))
     assert len(fullcmd) >= 1, "Need to pass at least a command"
     return _call(fullcmd, env=env)
-
-
-def jsonize(func):
-    '''translate from dict to json string '''
-    @wraps(func)
-    def _(*a, **kw):
-        try:
-            retval = func(*a, **kw)
-        except JagareError as e:
-            return e.make_response()
-
-        if isinstance(retval, str) or isinstance(retval, unicode):
-            return retval
-        elif isinstance(retval, list):
-            retval = {"data": retval, "error": 0}
-        elif isinstance(retval, dict):
-            if "data" not in retval or not isinstance(retval["data"], (list, dict)):
-                retval = {"data": retval, "error": 0}
-
-        return json.loads(retval)
-    return _
