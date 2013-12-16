@@ -92,6 +92,7 @@ class Jagare(object):
         return branches
 
     def show(self, ref):
+        """return formated dict"""
         try:
             obj = self.repository.revparse_single(ref)
         except KeyError:
@@ -109,9 +110,10 @@ class Jagare(object):
             return format_blob(ref, obj, self.repository)
 
     def ls_tree(self, ref, path=None, recursive=False, size=None,
-                with_commit=False):
+                with_commit=False, name_only=None):
         return ls_tree(self.repository, ref, req_path=path,
-                       recursive=recursive, size=size, with_commit=with_commit)
+                       recursive=recursive, size=size,
+                       with_commit=with_commit, name_only=name_only)
 
     def rev_list(self, *w, **kw):
         commits = []
