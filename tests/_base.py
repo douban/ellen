@@ -3,6 +3,7 @@
 import os
 import shutil
 import tempfile
+from utils import copytree
 
 UNINIT_REPO_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -57,7 +58,8 @@ class BareRepoTest(TempTest):
 
     def setUp(self):
         self.init_temp_path()
-        self.path = BARE_REPO_PATH
+        self.path = self.get_temp_path()
+        copytree(BARE_REPO_PATH, self.path)
 
     def tearDown(self):
         self.clean_temp_path()
