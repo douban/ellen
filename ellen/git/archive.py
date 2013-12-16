@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ellen.utils.process import call2
-from ellen.utils.process import GIT_EXECUTABLE
+from ellen.utils.process import git_with_path
 
 
 def archive_repository(path, prefix, ref='master'):
     """git archive command"""
-    cmd = [GIT_EXECUTABLE, '--git-dir', path, 'archive']
-    cmd.append('--prefix=%s/' % prefix)
-    cmd.append(ref)
-    return call2(cmd)
+    git = git_with_path(git_dir=path)
+    return git.archive(ref, prefix=prefix + '/')
