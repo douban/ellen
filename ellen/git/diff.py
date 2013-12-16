@@ -85,7 +85,11 @@ def diff_commits(repository, commit, from_commit=None, **kwargs):
 def diff_commit(repository, commit, **kwargs):
     ''' one commit, default diff with parent '''
     parents = commit.parents
-    if len(parents) >= 1:
+    if len(parents) == 1:
+        diff = diff_commits(repository, commit, parents[0], **kwargs)
+    elif len(parents) == 2:
+        diff = diff_commits(repository, parents[0], parents[-1], **kwargs)
+    elif len(parents) > 2:
         diff = diff_commits(repository, commit, parents[0], **kwargs)
     else:
         diff = diff_commits(repository, commit, **kwargs)
