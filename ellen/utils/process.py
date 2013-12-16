@@ -42,6 +42,7 @@ def _call(cmd, env=None):
     return result
 
 
+# TODO: add tests or doctests
 class Process(object):
     def __init__(self, cmds=None):
         self.cmds = cmds or []
@@ -109,16 +110,3 @@ def git_with_repo(repository):
     git_dir = repository.path
     work_tree = repository.workdir
     return git_with_path(git_dir, work_tree)
-
-
-# TODO: remove repository.
-def call(repository, cmd, env=None):
-    cmd = _shlex_split(cmd)
-
-    git_dir = repository.path.rstrip('/')
-    work_dir = '/'.join(git_dir.split('/')[:-1])
-    add2cmd = ['--git-dir', git_dir]
-    if not repository.is_bare:
-        add2cmd += ['--work-tree', work_dir]
-
-    return _call([GIT_EXECUTABLE] + add2cmd + cmd, env=env)
