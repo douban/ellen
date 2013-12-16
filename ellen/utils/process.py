@@ -57,11 +57,18 @@ class Process(object):
 
     def _parse_args(self, *a, **kw):
         cmds = []
+        for p in a:
+            if not isinstance(p, str):
+                raise KeyError
+            cmds.append(p)
+
         for k, v in kw.iteritems():
             if len(k) == 1:
                 k = '-' + k
             else:
                 k = '--' + k
+            if '_' in k:  # e.g. --no_ff -> --no-ff
+                k = k.replace('_', '-')
             if not v:  # v in (None, '', False)
                 continue
             elif isinstance(v, bool):  # v is True
@@ -71,11 +78,6 @@ class Process(object):
                 cmds.append(v)
             else:
                 raise KeyError
-
-        for p in a:
-            if not isinstance(p, str):
-                raise KeyError
-            cmds.append(p)
         self.cmds += cmds
 
     def bake(self, *a, **kw):
