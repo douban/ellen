@@ -47,6 +47,7 @@ class Process(object):
         self.cmds = cmds or []
 
     def __getattr__(self, name):
+        name = name.replace('_', '-')  # e.g. format_patch -> format-patch
         return self.bake(name)
 
     def __call__(self, *a, **kw):
