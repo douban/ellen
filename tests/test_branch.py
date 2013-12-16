@@ -5,6 +5,9 @@ from _base import BARE_REPO_BRANCHES
 from ellen.repo import Jagare
 
 
+# FIXME: 把类名都改成大写
+# FIXME: 把 test_simple 改成更有意义的名字
+
 class test_branch(BareRepoTest):
 
     def test_simple(self):
@@ -21,3 +24,8 @@ class test_branch(BareRepoTest):
         assert 'chinese' in repo.branches
         assert 'chinese' not in branches
         assert 'master' in branches
+
+    def test_create(self):
+        repo = Jagare(self.path)
+        repo.create_branch('br_test', 'master')
+        assert repo.sha('br_test') == repo.sha('master')

@@ -146,6 +146,14 @@ class Jagare(object):
         version = version.strip()
         return _resolve_type(self.repository, version)
 
+    def create_branch(self, name, ref, force=False):
+        obj = self.repository.revparse_single(ref)
+        if obj.type == GIT_OBJ_COMMIT:
+            self.repository.create_branch(name, obj, force)
+            return True
+        else:
+            return False
+
     # TODO: cls.clone_from
 
     @classmethod
@@ -199,7 +207,7 @@ class Jagare(object):
         self.update_ref('HEAD', branch.name)
 
     def sha(self, rev='HEAD'):
-        return _resolve_version(self.repository, rev)
+        return self.resolve_commit(rev)
 
     def merge_base(self, to_sha, from_sha):
         return self.repository.merge_base(to_sha, from_sha)
