@@ -11,7 +11,8 @@ UNINIT_REPO_PATH = os.path.join(
 BARE_REPO_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "data", "bare_repo1")
-BARE_REPO_BRANCHES = ['chinese', 'master']
+BARE_REPO_OTHER_BRANCH = 'chinese'
+BARE_REPO_BRANCHES = [BARE_REPO_OTHER_BRANCH, 'master']
 BARE_REPO_TAG = ()
 
 
@@ -54,6 +55,7 @@ class NoneRepoTest(TempTest):
         shutil.rmtree(self.path, ignore_errors=True)
 
 
+# TODO: add self.repo ?
 class BareRepoTest(TempTest):
 
     def setUp(self):
