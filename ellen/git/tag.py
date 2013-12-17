@@ -4,8 +4,8 @@
 from pygit2 import GIT_OBJ_TAG
 from pygit2 import GIT_OBJ_COMMIT
 
-from ellen.utils.git import format_tag
-from ellen.utils.git import format_lw_tag
+from ellen.utils.format import format_tag
+from ellen.utils.format import format_lw_tag
 
 
 def list_tags(repository, name_only=None):
@@ -23,5 +23,5 @@ def list_tags(repository, name_only=None):
                 # lightweight tag
                 tags.append(format_lw_tag(ref, tag_obj, repository))
             elif tag_obj and tag_obj.type == GIT_OBJ_TAG:
-                tags.append(format_tag(ref, tag_obj, repository))
+                tags.append(format_tag(tag_obj, repository))
     return tuple(tags)

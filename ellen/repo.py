@@ -4,16 +4,10 @@
 import os
 
 from pygit2 import Repository
-from pygit2 import GIT_OBJ_TAG
-from pygit2 import GIT_OBJ_BLOB
-from pygit2 import GIT_OBJ_TREE
 from pygit2 import GIT_OBJ_COMMIT
 
 from ellen.utils import JagareError
-from ellen.utils.git import format_blob
-from ellen.utils.git import format_tree
-from ellen.utils.git import format_commit
-from ellen.utils.git import format_tag
+from ellen.utils.format import format_obj
 from ellen.utils.git import _resolve_version
 from ellen.utils.git import _resolve_type
 from ellen.git.tree import ls_tree
@@ -97,17 +91,7 @@ class Jagare(object):
             obj = self.repository.revparse_single(ref)
         except KeyError:
             return {}
-        obj_type = obj.type
-
-        # TODO: formatter
-        if obj_type == GIT_OBJ_COMMIT:
-            return format_commit(ref, obj, self.repository)
-        elif obj_type == GIT_OBJ_TAG:
-            return format_tag(ref, obj, self.repository)
-        elif obj_type == GIT_OBJ_TREE:
-            return format_tree(ref, obj, self.repository)
-        elif obj_type == GIT_OBJ_BLOB:
-            return format_blob(ref, obj, self.repository)
+        return format_obj(obj, repository)
 
     def ls_tree(self, ref, path=None, recursive=False, size=None,
                 with_commit=False, name_only=None):
@@ -183,7 +167,6 @@ class Jagare(object):
 
     @classmethod
     def init(cls, path, work_path=None, bare=None):
-        # TODO: move to libs
         # if parent dir not exist, create it.
         if not os.path.exists(path):
             os.makedirs(path)
