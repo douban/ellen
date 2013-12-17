@@ -85,7 +85,6 @@ class Jagare(object):
         branches = self.repository.listall_branches()
         return branches
 
-    # TODO: add tests
     def show(self, ref):
         """return formated dict"""
         try:

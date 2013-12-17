@@ -13,7 +13,7 @@ BARE_REPO_PATH = os.path.join(
     "data", "bare_repo1")
 BARE_REPO_OTHER_BRANCH = 'chinese'
 BARE_REPO_BRANCHES = [BARE_REPO_OTHER_BRANCH, 'master']
-BARE_REPO_TAG = ()
+BARE_REPO_TAGS = ('tag1',)
 
 
 class TempTest(object):

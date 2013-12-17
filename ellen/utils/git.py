@@ -16,6 +16,8 @@ PYGIT2_OBJ_TYPE = {
 }
 
 
+# TODO: should be git rev-parse command.  e.g. repo.rev_parse
+
 # FIXME: why internal ??
 def _resolve_version(repository, version):
     '''返回完整的 40 位的 commit hash '''
