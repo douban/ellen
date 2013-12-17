@@ -4,11 +4,6 @@
 import shlex
 import logging
 import subprocess
-import json
-import collections
-from functools import wraps
-
-from . import JagareError
 
 GIT_EXECUTABLE = 'git'
 GIT_DIR_DEFAULT = '.git'
@@ -17,6 +12,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
+# TODO: remove this?
 def _shlex_split(cmd):
     if isinstance(cmd, unicode):
         return [c.decode("utf-8") for c in shlex.split(cmd.encode("utf-8"))]
@@ -39,7 +35,6 @@ def _call(cmd, env=None):
     err = str(err)
 
     result = {}
-
     result['returncode'] = process.returncode
     result['stdout'] = out
     result['stderr'] = err
@@ -47,57 +42,71 @@ def _call(cmd, env=None):
     return result
 
 
-# TODO: remove repository.
-def call(repository, cmd, env=None):
-    cmd = _shlex_split(cmd)
-    git_dir = repository.path.rstrip('/')
-    work_dir = '/'.join(git_dir.split('/')[:-1])
-    add2cmd = ['--git-dir', git_dir]
-    if not repository.is_bare:
-        add2cmd += ['--work-tree', work_dir]
-    return _call([GIT_EXECUTABLE] + add2cmd + cmd, env=env)
+# TODO: add tests or doctests
+class Process(object):
+    def __init__(self, cmds=None):
+        self.cmds = cmds or []
+
+    def __getattr__(self, name):
+        name = name.replace('_', '-')  # e.g. format_patch -> format-patch
+        return self.bake(name)
+
+    def __call__(self, *a, **kw):
+        proc = self.bake()
+        env = kw.pop('env', {})
+        proc._parse_args(*a, **kw)
+        return proc.call(env=env)
+
+    def _parse_args(self, *a, **kw):
+        cmds = []
+        for p in a:
+            if not isinstance(p, str):
+                raise KeyError
+            cmds.append(p)
+
+        for k, v in kw.iteritems():
+            if len(k) == 1:
+                k = '-' + k
+            else:
+                k = '--' + k
+            if '_' in k:  # e.g. --no_ff -> --no-ff
+                k = k.replace('_', '-')
+            if not v:  # v in (None, '', False)
+                continue
+            elif isinstance(v, bool):  # v is True
+                cmds.append(k)
+            elif isinstance(v, str):
+                cmds.append(k)
+                cmds.append(v)
+            else:
+                raise KeyError
+        self.cmds += cmds
+
+    def bake(self, *a, **kw):
+        cmds = list(self.cmds)
+        proc = Process(cmds)
+        proc._parse_args(*a, **kw)
+        return proc
+
+    def call(self, cmdstr='', env=None):
+        extra_cmds = _shlex_split(cmdstr)
+        return _call(self.cmds + extra_cmds, env=env)
 
 
-# TODO: use call instead
-def call2(*args, **kwargs):
-    """System calls with string or list args"""
-    env = kwargs.pop('env', {})
-    assert not kwargs, "call kwargs not understood in %s" % kwargs
-    fullcmd = []
-    if len(args) == 1:
-        cmd = args[0]
-    else:
-        cmd = args
-    cmd = _shlex_split(cmd)
-    # flatten
-    fullcmd = []
-    for el in cmd:
-        if isinstance(el, basestring):
-            fullcmd.append(el)
-        elif isinstance(el, collections.Iterable):
-            fullcmd.extend(el)
-        else:
-            fullcmd.append(str(el))
-    assert len(fullcmd) >= 1, "Need to pass at least a command"
-    return _call(fullcmd, env=env)
+process = Process()
+git = process.bake('git')
 
 
-def jsonize(func):
-    '''translate from dict to json string '''
-    @wraps(func)
-    def _(*a, **kw):
-        try:
-            retval = func(*a, **kw)
-        except JagareError as e:
-            return e.make_response()
+def git_with_path(git_dir=None, work_tree=None):
+    baked = git.bake()
+    if git_dir:
+        baked = baked.bake('--git-dir', git_dir)
+    if work_tree:
+        baked = baked.bake('--work-tree', work_tree)
+    return baked
 
-        if isinstance(retval, str) or isinstance(retval, unicode):
-            return retval
-        elif isinstance(retval, list):
-            retval = {"data": retval, "error": 0}
-        elif isinstance(retval, dict):
-            if "data" not in retval or not isinstance(retval["data"], (list, dict)):
-                retval = {"data": retval, "error": 0}
 
-        return json.loads(retval)
-    return _
+def git_with_repo(repository):
+    git_dir = repository.path
+    work_tree = repository.workdir
+    return git_with_path(git_dir, work_tree)

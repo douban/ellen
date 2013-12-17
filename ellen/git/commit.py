@@ -17,7 +17,8 @@ from ellen.utils.tree_node import init_root
 def create_commit(repository, branch, parent,
                   author_name, author_email,
                   message, reflog, data):
-    """git commit command, pygit2 wrapper"""
+    """git commit command, pygit2 wrapper.
+    param parent means parent ref"""
     if repository.is_empty:
         if branch != "master" or parent != "master":
             raise JagareError("only commit to master when repo is empty")

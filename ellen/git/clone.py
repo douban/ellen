@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ellen.utils.process import call
-from ellen.utils.process import call2
-from ellen.utils.process import GIT_EXECUTABLE
+from ellen.utils.process import git, git_with_repo
 
 
 def clone_repository(url, path, bare=None, checkout_branch=None, mirror=None,
@@ -11,18 +9,13 @@ def clone_repository(url, path, bare=None, checkout_branch=None, mirror=None,
     """git clone command
     NOTE: 因为`git clone`在本机上直接做硬链接,速度比pygit2.clone_repository快
     """
-    cmd = [GIT_EXECUTABLE, 'clone']
-    if checkout_branch:
-        cmd.append('-b')
-        cmd.append(checkout_branch)
-    if bare:
-        cmd.append('--bare')
-    if mirror:
-        cmd.append('--mirror')
-    cmd.append(url)
-    cmd.append(path)
-    return call2(cmd, env=env)
+    return git.clone(url, path,
+                     b=checkout_branch,
+                     bare=bare,
+                     mirror=mirror,
+                     env=env)
 
 
 def update_server_info(repository):
-    return call(repository, 'update-server-info')
+    git = git_with_repo(repository)
+    git('update-server-info')

@@ -10,7 +10,7 @@ class test_init(NoneRepoTest):
 
     def test_empty(self):
         self.clean()
-        repo = Jagare.init(self.path, work_path=self.path)
+        repo = Jagare.init(self.path, work_path=self.path)  # git_dir == work_tree ??
         pygit2_repo = Repository(self.path)
         assert is_repository(self.path) is True
         assert repo.empty is True

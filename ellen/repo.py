@@ -92,6 +92,7 @@ class Jagare(object):
         return branches
 
     def show(self, ref):
+        """return formated dict"""
         try:
             obj = self.repository.revparse_single(ref)
         except KeyError:
@@ -109,9 +110,10 @@ class Jagare(object):
             return format_blob(ref, obj, self.repository)
 
     def ls_tree(self, ref, path=None, recursive=False, size=None,
-                with_commit=False):
+                with_commit=False, name_only=None):
         return ls_tree(self.repository, ref, req_path=path,
-                       recursive=recursive, size=size, with_commit=with_commit)
+                       recursive=recursive, size=size,
+                       with_commit=with_commit, name_only=name_only)
 
     def rev_list(self, *w, **kw):
         commits = []
@@ -145,6 +147,14 @@ class Jagare(object):
     def resolve_type(self, version):
         version = version.strip()
         return _resolve_type(self.repository, version)
+
+    def create_branch(self, name, ref, force=False):
+        obj = self.repository.revparse_single(ref)
+        if obj.type == GIT_OBJ_COMMIT:
+            self.repository.create_branch(name, obj, force)
+            return True
+        else:
+            return False
 
     # TODO: cls.clone_from
 
@@ -199,7 +209,7 @@ class Jagare(object):
         self.update_ref('HEAD', branch.name)
 
     def sha(self, rev='HEAD'):
-        return _resolve_version(self.repository, rev)
+        return self.resolve_commit(rev)
 
     def merge_base(self, to_sha, from_sha):
         return self.repository.merge_base(to_sha, from_sha)

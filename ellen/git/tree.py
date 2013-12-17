@@ -101,7 +101,7 @@ def ls_tree(repository, ref,
         #        continue
 
         if name_only:
-            ret_tree['path'] = path
+            ret_tree[path] = path
             continue
 
         item = {

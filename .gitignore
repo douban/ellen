@@ -13,5 +13,8 @@ build
 # Editor
 *.sw[po]
 
+# ack-grep
+.ackrc
+
 # others
 tmp
