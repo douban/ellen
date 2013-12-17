@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from ellen.utils.process import git_with_repo
-from ellen.utils.git import format_blame
+from ellen.utils.format import format_blame
 
 
 def blame(repository, ref, path, lineno=None):

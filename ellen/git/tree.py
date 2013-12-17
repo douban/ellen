@@ -14,7 +14,7 @@ from pygit2 import GIT_OBJ_COMMIT
 from pygit2 import GIT_SORT_TOPOLOGICAL
 
 from ellen.utils import JagareError
-from ellen.utils.git import format_commit
+from ellen.utils.format import format_commit
 
 
 TREE_ORDER = {
@@ -230,7 +230,7 @@ def _format_with_last_commit(repository, ret_tree, to_commit):
 
         if not ret:
             continue
-        fc = format_commit(commit.hex, commit, None)
+        fc = format_commit(commit, None)
         for path, r in ret.iteritems():
             ret_tree[path]['commit'] = fc
             paths.remove(path)

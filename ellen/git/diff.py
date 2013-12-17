@@ -6,7 +6,7 @@ from pygit2 import GIT_DIFF_IGNORE_WHITESPACE
 
 from ellen.utils import JagareError
 from ellen.utils.git import _resolve_version
-from ellen.utils.git import format_diff
+from ellen.utils.format import format_diff
 
 
 def diff_wrapper(repository, *w, **kw):

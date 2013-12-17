@@ -5,9 +5,6 @@ import shlex
 import logging
 import subprocess
 
-GIT_EXECUTABLE = 'git'
-GIT_DIR_DEFAULT = '.git'
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
