@@ -19,7 +19,7 @@ def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
 
     commits_index_list = []
     commits_dict = {}
-    # TODO: use _resolve_version
+    # TODO: use resolve_version
     to_commit = repository.revparse_single(to_ref)
 
     walk_order = GIT_SORT_TOPOLOGICAL if first_parent else GIT_SORT_TIME
