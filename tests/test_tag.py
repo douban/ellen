@@ -5,7 +5,7 @@ from _base import BARE_REPO_TAGS
 from ellen.repo import Jagare
 
 
-class test_tag(BareRepoTest):
+class TestTag(BareRepoTest):
 
     def test_simple(self):
         repo = Jagare(self.path)
