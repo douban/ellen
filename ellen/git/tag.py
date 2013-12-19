@@ -15,7 +15,7 @@ def list_tags(repository, name_only=None):
     for ref in refs:
         if ref.startswith("refs/tags/"):
             if name_only:
-                tags.append(ref[10:])
+                tags.append(ref.rpartition('/')[-1])
                 continue
             # this is a tag but maybe a lightweight tag
             tag_obj = repository.revparse_single(ref)
