@@ -3,22 +3,20 @@
 
 from pygit2 import GIT_FILEMODE_BLOB_EXECUTABLE
 from pygit2 import GIT_FILEMODE_BLOB
-from pygit2 import GIT_OBJ_BLOB
-from pygit2 import GIT_FILEMODE_TREE
-from pygit2 import GIT_FILEMODE_LINK
-from pygit2 import GIT_FILEMODE_COMMIT
 from pygit2 import Signature
-from pygit2 import hash
 
 from ellen.utils import JagareError
 from ellen.utils.tree_node import init_root
 
 
+# FIXME: always return empty list
 def create_commit(repository, branch, parent,
                   author_name, author_email,
                   message, reflog, data):
     """git commit command, pygit2 wrapper.
-    param parent means parent ref"""
+    :param parent: parent ref
+    :param data: list of tuple(filepath, content, action),
+        action is insert/remove"""
     if repository.is_empty:
         if branch != "master" or parent != "master":
             raise JagareError("only commit to master when repo is empty")

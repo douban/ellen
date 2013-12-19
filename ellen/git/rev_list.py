@@ -70,7 +70,7 @@ def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
 def _check_author(commit, author):
     if author and commit.author.name == author:
         return True
-    elif author and commit.author.email == author:
+    elif author and commit.author.email == author:  # FIXME: ...
         return True
     elif not author:
         return True

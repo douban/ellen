@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import os
-
 from ellen.repo import Jagare
+
+# TODO: need more powerful test support
 
 
 def create_temp_repo(path, is_bare=True):
     repo = Jagare.init(path, bare=is_bare)
 
-    data = [(os.path.join(path, 'test_file'),
+    data = [('test_file',
              """test_content
              test_content
              test_content
@@ -29,7 +29,7 @@ def create_temp_repo(path, is_bare=True):
 def commit_something(path, branch='master', file_name='something'):
     repo = Jagare(path)
 
-    data = [(os.path.join(path, file_name),
+    data = [(file_name,
              """test_content
              test_content
              test_content

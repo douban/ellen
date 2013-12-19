@@ -108,6 +108,7 @@ class Jagare(object):
             pass
         return commits
 
+    # FIXME: just return result
     def blame(self, ref, path, lineno=None):
         result = blame(self.repository, ref, path, lineno)
         return self.show(ref), result
@@ -115,6 +116,7 @@ class Jagare(object):
     def format_patch(self, ref, from_ref=None):
         return format_patch(self.repository, ref, from_ref)
 
+    # FIXME: path arg no use?
     def detect_renamed(self, ref, path=None):
         return detect_renamed(self.repository, ref)
 
