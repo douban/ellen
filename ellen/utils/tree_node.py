@@ -4,9 +4,6 @@
 from pygit2 import GIT_OBJ_BLOB
 from pygit2 import GIT_FILEMODE_BLOB
 from pygit2 import GIT_FILEMODE_TREE
-from pygit2 import GIT_FILEMODE_LINK
-from pygit2 import GIT_FILEMODE_COMMIT
-from pygit2 import GIT_FILEMODE_BLOB_EXECUTABLE
 
 
 # used in ellen.commit
@@ -24,13 +21,13 @@ class TreeNode(object):
         self.builder = None
         self.content = None
 
-    def add_file(self, pathname, content=None):
+    def operating_file(self, operation, pathname, content):
         if pathname.startswith('/'):
             pathname = pathname[1:]
         paths = pathname.split('/')
         length = len(paths)
         if length == 1:
-            node = self.add_blob(pathname)
+            node = getattr(self, operation)(pathname)
             node.content = content
             return node
         root = self
@@ -38,7 +35,7 @@ class TreeNode(object):
             node = root.index.get(path, None)
             if not node:
                 if i == length - 1:
-                    node = root.add_blob(path)
+                    node = getattr(root, operation)(path)
                     node.content = content
                 else:
                     node = root.add_tree(path)
@@ -49,54 +46,28 @@ class TreeNode(object):
                 self.index[node.path] = node
         return node
 
+    def add_file(self, pathname, content=None):
+        return self.operating_file('add_blob', pathname, content)
+
     def del_file(self, pathname, content=None):
-        if pathname.startswith('/'):
-            pathname = pathname[1:]
-        paths = pathname.split('/')
-        length = len(paths)
-        if length == 1:
-            node = self.del_blob(pathname)
-            node.content = content
-            return node
-        root = self
-        for i, path in enumerate(paths):
-            node = root.index.get(path, None)
-            if not node:
-                if i == length - 1:
-                    node = root.del_blob(path)
-                    node.content = content
-                else:
-                    node = root.add_tree(path)
-            root = node
-            if i >= 1:
-                node.path = '/'.join(paths[:i])
-                node.path = '/'.join([node.path, path])
-                self.index[node.path] = node
+        return self.operating_file('del_blob', pathname, content)
+
+    def action_tree_or_blob(self, path, type, action='insert'):
+        if path.startswith('/'):
+            path = path[1:]
+        node = TreeNode(self, path, type, action=action)
+        self.index[path] = node
+        self.children.append(node)
         return node
 
     def add_tree(self, path):
-        if path.startswith('/'):
-            path = path[1:]
-        node = TreeNode(self, path, 'tree')
-        self.index[path] = node
-        self.children.append(node)
-        return node
+        return self.action_tree_or_blob(path, 'tree')
 
     def add_blob(self, path):
-        if path.startswith('/'):
-            path = path[1:]
-        node = TreeNode(self, path, 'blob')
-        self.index[path] = node
-        self.children.append(node)
-        return node
+        return self.action_tree_or_blob(path, 'blob')
 
     def del_blob(self, path):
-        if path.startswith('/'):
-            path = path[1:]
-        node = TreeNode(self, path, 'blob', action='remove')
-        self.index[path] = node
-        self.children.append(node)
-        return node
+        return self.action_tree_or_blob(path, 'blob', action='remove')
 
     def walk(self):
         queue = [i for i in self.children] + [self]
