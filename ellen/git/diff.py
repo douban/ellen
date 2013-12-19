@@ -9,6 +9,7 @@ from ellen.utils.git import resolve_version
 from ellen.utils.format import format_diff
 
 
+# FIXME: make args explicit
 def diff_wrapper(repository, *w, **kw):
     ''' Jagare's diff wrapper '''
     try:

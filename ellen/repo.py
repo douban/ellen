@@ -61,6 +61,8 @@ class Jagare(object):
 
     @property
     def head(self):
+        """ return pygit2.Reference """
+        # FIXME: return repo.head.name ?
         if self.repository.is_empty:
             return None
         return self.repository.head
