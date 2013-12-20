@@ -18,8 +18,7 @@ PYGIT2_OBJ_TYPE = {
 
 # TODO: should be git rev-parse command.  e.g. repo.rev_parse
 
-# FIXME: why internal ??
-def _resolve_version(repository, version):
+def resolve_version(repository, version):
     '''返回完整的 40 位的 commit hash '''
     try:
         obj = repository.revparse_single(version)
@@ -36,8 +35,7 @@ def _resolve_version(repository, version):
     return commit.hex
 
 
-# FIXME: why internal ??
-def _resolve_type(repository, version):
+def resolve_type(repository, version):
     try:
         obj = repository.revparse_single(version)
         type = PYGIT2_OBJ_TYPE[obj.type]

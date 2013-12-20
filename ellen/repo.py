@@ -8,8 +8,8 @@ from pygit2 import GIT_OBJ_COMMIT
 
 from ellen.utils import JagareError
 from ellen.utils.format import format_obj
-from ellen.utils.git import _resolve_version
-from ellen.utils.git import _resolve_type
+from ellen.utils.git import resolve_version
+from ellen.utils.git import resolve_type
 from ellen.git.tree import ls_tree
 from ellen.git.rev_list import rev_list
 from ellen.git.rename import detect_renamed
@@ -61,6 +61,8 @@ class Jagare(object):
 
     @property
     def head(self):
+        """ return pygit2.Reference """
+        # FIXME: return repo.head.name ?
         if self.repository.is_empty:
             return None
         return self.repository.head
@@ -108,6 +110,7 @@ class Jagare(object):
             pass
         return commits
 
+    # FIXME: just return result
     def blame(self, ref, path, lineno=None):
         result = blame(self.repository, ref, path, lineno)
         return self.show(ref), result
@@ -115,6 +118,7 @@ class Jagare(object):
     def format_patch(self, ref, from_ref=None):
         return format_patch(self.repository, ref, from_ref)
 
+    # FIXME: path arg no use?
     def detect_renamed(self, ref, path=None):
         return detect_renamed(self.repository, ref)
 
@@ -126,11 +130,11 @@ class Jagare(object):
 
     def resolve_commit(self, version):
         version = version.strip()
-        return _resolve_version(self.repository, version)
+        return resolve_version(self.repository, version)
 
     def resolve_type(self, version):
         version = version.strip()
-        return _resolve_type(self.repository, version)
+        return resolve_type(self.repository, version)
 
     def create_branch(self, name, ref, force=False):
         obj = self.repository.revparse_single(ref)

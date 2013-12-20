@@ -5,10 +5,11 @@ from pygit2 import GIT_OBJ_COMMIT
 from pygit2 import GIT_DIFF_IGNORE_WHITESPACE
 
 from ellen.utils import JagareError
-from ellen.utils.git import _resolve_version
+from ellen.utils.git import resolve_version
 from ellen.utils.format import format_diff
 
 
+# FIXME: make args explicit
 def diff_wrapper(repository, *w, **kw):
     ''' Jagare's diff wrapper '''
     try:
@@ -47,14 +48,14 @@ def diff(repository, ref, from_ref=None, **kwargs):
     # TODO: add merge_base support
     _diff = {}
     ref = ref.strip()
-    sha = _resolve_version(repository, ref)
+    sha = resolve_version(repository, ref)
     if not sha:
         raise JagareError("%s...%s" % (from_ref, ref))
     commit = get_commit_by_sha(repository, sha)
     from_commit = None
     if from_ref:
         from_ref = from_ref.strip()
-        from_sha = _resolve_version(repository, from_ref)
+        from_sha = resolve_version(repository, from_ref)
         if not from_sha:
             raise JagareError("%s...%s" % (from_ref, ref))
         from_commit = get_commit_by_sha(repository, from_sha)

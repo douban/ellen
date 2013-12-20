@@ -4,7 +4,7 @@ from _base import BareRepoTest
 from ellen.repo import Jagare
 
 
-class test_commit(BareRepoTest):
+class TestCommit(BareRepoTest):
 
     def test_resolve_commit(self):
         repo = Jagare(self.path)

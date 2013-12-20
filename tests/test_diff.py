@@ -6,7 +6,7 @@ from ellen.repo import Jagare
 
 # TODO:
 
-class test_diff(BareRepoTest):
+class TestDiff(BareRepoTest):
 
     def test_diff_text(self):
         repo = Jagare(self.path)

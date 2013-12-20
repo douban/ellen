@@ -6,7 +6,7 @@ from _base import NoneRepoTest
 from ellen.repo import Jagare
 
 
-class test_init(NoneRepoTest):
+class TestInit(NoneRepoTest):
 
     def test_empty(self):
         self.clean()

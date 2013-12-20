@@ -5,10 +5,9 @@ from _base import BARE_REPO_BRANCHES
 from ellen.repo import Jagare
 
 
-# FIXME: 把类名都改成大写
 # FIXME: 把 test_simple 改成更有意义的名字
 
-class test_branch(BareRepoTest):
+class TestBranch(BareRepoTest):
 
     def test_simple(self):
         repo = Jagare(self.path)
