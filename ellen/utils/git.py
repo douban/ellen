@@ -17,6 +17,7 @@ from __future__ import absolute_import
 import magic
 from datetime import datetime
 import re
+from functools import partial
 
 from pygit2 import Repository
 from pygit2 import GIT_OBJ_TAG
@@ -303,20 +304,15 @@ def _format_hunks(hunks):
 
 class GitRepository(Repository):
 
-    def revparse_single(self, *w, **kw):
+    def __getattr__(self, name):
+        _dict = {'revparse_single': 'rev not found.',
+                 'lookup_reference': 'reference not found.',
+                 'read': 'sha not found'}
+        if name in _dict:
+            return partial(self.factory, name, _dict[name])
+
+    def factory(self, name, error, *w, **kw):
         try:
-            return super(GitRepository, self).revparse_single(*w, **kw)
+            return getattr(super(GitRepository, self), name)(*w, **kw)
         except (KeyError, ValueError):
-            raise JagareError("rev not found.", 400)
-
-    def lookup_reference(self, *w, **kw):
-        try:
-            return super(GitRepository, self).lookup_reference(*w, **kw)
-        except ValueError:
-            raise JagareError("reference not found.", 400)
-
-    def read(self, *w, **kw):
-        try:
-            return super(GitRepository, self).read(*w, **kw)
-        except ValueError:
-            raise JagareError("sha not found", 400)
+            raise JagareError(error, 400)
