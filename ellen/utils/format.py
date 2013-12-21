@@ -23,7 +23,7 @@ def format_obj(obj, repository):
 
 def format_commit(commit, repository):
     d = {}
-    # FIXME: parent or parents
+    # FIXME: parent or parents, use parents
     d['parent'] = [p.hex for p in commit.parents] if commit.parents else []
     d['parents'] = [p.hex for p in commit.parents] if commit.parents else []
     d['tree'] = commit.tree.hex

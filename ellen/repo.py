@@ -77,6 +77,7 @@ class Jagare(object):
         return self.list_tags(name_only=True)
 
     # TODO: change to property
+    # FIXME: return [remote.name], and pygit2.remotes be internal
     def remotes(self):
         return self.repository.remotes
 
@@ -144,6 +145,11 @@ class Jagare(object):
         else:
             return False
 
+    def delete_branch(self, name):
+        branch = self.repository.lookup_branch(name)
+        if branch:
+            branch.delete()
+
     # TODO: cls.clone_from
 
     @classmethod
@@ -177,18 +183,27 @@ class Jagare(object):
         init_repository(path, work_path=work_path, bare=bare)
         return cls(path)
 
+    # TODO: rename to list_references
     def listall_references(self):
+        """return a list, e.g. ['refs/heads/master', ...]"""
         return self.repository.listall_references()
 
-    def lookup_reference(self, *w, **kw):
-        return self.repository.lookup_reference(*w, **kw)
+    # FIXME: 不要暴露出 pygit2.Reference 很难封装
+    # TODO: 改成 internal 的
+    def lookup_reference(self, name):
+        return self.repository.lookup_reference(name)
+
+    # TODO: 从 Code 移到 ellen
+    # def get_latest_update_branches
 
     def add_remote(self, name, url):
         self.repository.create_remote(name, url)
 
+    # FIXME: retval
     def update_ref(self, ref, newvalue):
         return update_ref(self.repository, ref, newvalue)
 
+    # FIXME: retval
     def update_head(self, branch_name):
         branch = self.repository.lookup_branch(branch_name)
         if not branch:
@@ -198,7 +213,9 @@ class Jagare(object):
     def sha(self, rev='HEAD'):
         return self.resolve_commit(rev)
 
+    # FIXME: return pygit2.Oid.hex
     def merge_base(self, to_sha, from_sha):
+        """return pygit2.Oid"""
         return self.repository.merge_base(to_sha, from_sha)
 
     def fetch_all(self):
@@ -218,14 +235,10 @@ class Jagare(object):
     def push(self, remote, ref, _env=None):
         return push(self.repository, remote, ref, _env=_env)
 
+    # FIXME: def archive(self, prefix, ref='master'):
     def archive(self, prefix):
         result = archive_repository(self.repository.path, prefix)
         return result['stdout']
-
-    def delete_branch(self, name):
-        branch = self.repository.lookup_branch(name)
-        if branch:
-            branch.delete()
 
 
 def repository(path):
