@@ -235,14 +235,9 @@ def _format_pygit2_signature(signature):
     # copy from http://code.dapps.douban.com/code/blob/f37dbf0a51a783fa3af14574a4379dd6e2d64b35/libs/git2.py#L-25
     '''格式化 pygit2 操作人信息'''
     d = {}
-    d['date'] = datetime.fromtimestamp(
-        signature.time,
-        # FIXME: add offset for app.
-        # FixedOffset(signature.offset, None)
-    )
     d['name'] = signature.name
     d['email'] = signature.email
-    # strftime('%Y-%m-%dT%H:%M:%S+0800')
-    d['ts'] = str(signature.time)
-    #d['tz'] = datetime.fromtimestamp(signature.time, FixedOffset(signature.offset, None)).strftime('%z')
+    d['time'] = signature.time
+    d['offset'] = signature.offset
     return d
+
