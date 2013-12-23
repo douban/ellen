@@ -178,8 +178,6 @@ def format_diff(diff):
         _patches.append({
             'amode': '100644',
             'bmode': '100644',
-            'asha': patch.old_oid,  # no use? same with 'old_oid'
-            'bsha': patch.new_oid,
             'old_sha': old_sha,
             'new_sha': new_sha,
             'change': patch.status,
