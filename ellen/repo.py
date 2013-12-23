@@ -13,7 +13,7 @@ from ellen.utils.git import resolve_type
 from ellen.git.tree import ls_tree
 from ellen.git.rev_list import rev_list
 from ellen.git.rename import detect_renamed
-from ellen.git.tag import list_tags
+from ellen.git.tag import list_tags, create_tag
 from ellen.git.commit import create_commit
 from ellen.git.diff import diff_wrapper as diff
 from ellen.git.ref import update_ref
@@ -236,6 +236,10 @@ class Jagare(object):
     def archive(self, prefix, ref='master'):
         result = archive_repository(self.repository.path, prefix, ref)
         return result['stdout']
+
+    def create_tag(self, name, ref, author_name, author_email, message):
+        return create_tag(self.repository, name, ref,
+                          author_name, author_email, message)
 
 
 def repository(path):
