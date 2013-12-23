@@ -150,8 +150,6 @@ class Jagare(object):
         if branch:
             branch.delete()
 
-    # TODO: cls.clone_from
-
     @classmethod
     def _clone(cls, url, path, bare=None, branch=None, mirror=None,
                env=None):
@@ -235,9 +233,8 @@ class Jagare(object):
     def push(self, remote, ref, _env=None):
         return push(self.repository, remote, ref, _env=_env)
 
-    # FIXME: def archive(self, prefix, ref='master'):
-    def archive(self, prefix):
-        result = archive_repository(self.repository.path, prefix)
+    def archive(self, prefix, ref='master'):
+        result = archive_repository(self.repository.path, prefix, ref)
         return result['stdout']
 
 
