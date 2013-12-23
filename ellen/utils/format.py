@@ -23,7 +23,8 @@ def format_obj(obj, repository):
 
 def format_commit(commit, repository):
     d = {}
-    # FIXME: parent or parents, use parents
+    d['type'] = 'commit'
+    # FIXME: use parents
     d['parent'] = [p.hex for p in commit.parents] if commit.parents else []
     d['parents'] = [p.hex for p in commit.parents] if commit.parents else []
     d['tree'] = commit.tree.hex
@@ -89,7 +90,7 @@ def format_lw_tag(ref, tag, repository):
     d['name'] = _format_short_reference_name(ref)
     d['tag'] = d['name']
     d['object'] = tag.hex
-    d['type'] = 'commit'
+    d['type'] = 'commit'  # really useful ?
     d['commit'] = format_commit(tag, repository)
     return d
 
@@ -244,4 +245,3 @@ def _format_pygit2_signature(signature):
 def _format_pygit2_reference(reference):
     d = {}
     return d
-
