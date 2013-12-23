@@ -30,7 +30,6 @@ def format_commit(commit, repository):
     d['committer'] = _format_pygit2_signature(commit.committer)
     d['author'] = _format_pygit2_signature(commit.author)
     d['email'] = commit.author.email  # FIXME
-    d['time'] = d['author']['date']  # FIXME
     d['commit'] = commit.hex  # FIXME
     d['message'], _, d['body'] = commit.message.strip().partition('\n\n')
     d['sha'] = commit.hex
@@ -239,5 +238,10 @@ def _format_pygit2_signature(signature):
     d['email'] = signature.email
     d['time'] = signature.time
     d['offset'] = signature.offset
+    return d
+
+
+def _format_pygit2_reference(reference):
+    d = {}
     return d
 
