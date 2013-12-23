@@ -32,8 +32,8 @@ def create_tag(repository, name, ref, author_name, author_email, message):
     obj = repository.revparse_single(ref)
     if obj.type == GIT_OBJ_COMMIT:
         signature = Signature(author_name, author_email)
-        repository.create_tag(name, obj.hex, GIT_OBJ_COMMIT,
-                              signature, message)
-        return True
+        oid = repository.create_tag(name, obj.hex, GIT_OBJ_COMMIT,
+                                    signature, message)
+        return oid and oid.hex
     else:
-        return False
+        return None

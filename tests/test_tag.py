@@ -19,5 +19,5 @@ class TestTag(BareRepoTest):
         ret = repo.create_tag('test_create_tag', 'master', 'lh',
                               'lh@localhost', 'message')
 
-        assert ret is True
+        assert ret
         assert len(repo.tags) == len(tags) + 1
