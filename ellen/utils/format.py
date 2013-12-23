@@ -180,8 +180,6 @@ def format_diff(diff):
             'bmode': '100644',
             'old_sha': old_sha,
             'new_sha': new_sha,
-            'filename': patch.old_file_path,
-            'new_filename': patch.new_file_path,
             'additions': patch.additions,
             'deletions': patch.deletions,
             'similarity': patch.similarity,
