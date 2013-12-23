@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+Dealing with internal diff
+"""
+
 import difflib
 
 
