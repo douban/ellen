@@ -13,8 +13,7 @@ def update_ref(repository, ref, newvalue):
 
     :param ref: the full name of the reference/symbolic ref.
     :param newvalue: the sha-1 value of the commit
-                      or the full name of the target reference.
-    """
+                      or the full name of the target reference."""
     # TODO: support for no-deref option
     # git update-ref
     if repository.is_empty:

@@ -11,7 +11,16 @@ from ellen.utils.format import format_diff
 
 # FIXME: make args explicit
 def diff_wrapper(repository, *w, **kw):
-    ''' Jagare's diff wrapper '''
+    """Jagare's diff wrapper,
+    :param ref:
+    :param from_ref:
+    :param ignore_space:
+    :param flags:
+    :param context_lines:
+    :param path:
+    :param paths:
+    :param rename_detection:
+    """
     try:
         kws = {}
         ignore_space = kw.get('ignore_space', None)
@@ -31,21 +40,27 @@ def diff_wrapper(repository, *w, **kw):
             kws.update({'paths': [path]})
         if paths:
             kws.update({'paths': paths})
-        # call diff
+
         d = diff(repository, *w, **kws)
         rename_detection = kw.get('rename_detection', None)
         if rename_detection:
             d['diff'].find_similar()
-            #d.find_similar()
-        # return formated diff dict
+
         return format_diff(d)
+
     except JagareError:
         return []
 
 
 def diff(repository, ref, from_ref=None, **kwargs):
-    """git diff command, pygit2 wrapper"""
-    # TODO: add merge_base support
+    """git diff command, pygit2 wrapper
+    :param ref:
+    :param from_ref:
+    :param flags:
+    :param context_lines:
+    :param paths:
+    """
+
     _diff = {}
     ref = ref.strip()
     sha = resolve_version(repository, ref)
@@ -59,14 +74,17 @@ def diff(repository, ref, from_ref=None, **kwargs):
         if not from_sha:
             raise JagareError("%s...%s" % (from_ref, ref))
         from_commit = get_commit_by_sha(repository, from_sha)
+
     # get pygit2 diff
     if from_commit:
         diff, _diff['old_sha'] = diff_commits(repository, commit, from_commit,
                                               **kwargs)
     else:
         diff, _diff['old_sha'] = diff_commit(repository, commit, **kwargs)
+
     _diff['new_sha'] = commit.hex
     _diff['diff'] = diff
+
     return _diff
 
 
@@ -84,7 +102,7 @@ def diff_commits(repository, commit, from_commit=None, **kwargs):
 
 
 def diff_commit(repository, commit, **kwargs):
-    ''' one commit, default diff with parent '''
+    """ one commit, default diff with parent """
     parents = commit.parents
     if len(parents) == 1:
         diff = diff_commits(repository, commit, parents[0], **kwargs)
