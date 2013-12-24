@@ -205,7 +205,6 @@ def _format_hunks(hunks):
             'old_lines': hunk.old_lines,
             'new_lines': hunk.new_lines,
             'lines': hunk.lines,
-            'mdiff': mdiff2(hunk.lines),
             }
         _hunks.append(wrapped_hunk)
     return _hunks
