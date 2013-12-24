@@ -72,7 +72,7 @@ class Process(object):
                 continue
             elif isinstance(v, bool):  # v is True
                 cmds.append(k)
-            elif isinstance(v, str):
+            elif isinstance(v, str) or isinstance(v, unicode):
                 cmds.append(k)
                 cmds.append(v)
             else:
