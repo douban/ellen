@@ -107,7 +107,7 @@ def diff_commit(repository, commit, **kwargs):
     if len(parents) == 1:
         diff = diff_commits(repository, commit, parents[0], **kwargs)
     elif len(parents) == 2:
-        merge_base_hex = repository.merge_base(parents[0], parents[-1])
+        merge_base_hex = repository.merge_base(parents[0].hex, parents[-1].hex)
         merge_base = repository[merge_base_hex] if merge_base_hex else commit
         diff = diff_commits(repository, merge_base, parents[-1], **kwargs)
     elif len(parents) > 2:
