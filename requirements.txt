@@ -1,2 +1,2 @@
--e git+http://code.dapps.douban.com/pygit2.git@3a8a145f634fb86673fd6df26677622771bcb2d1#egg=pygit2
+##-e git+http://code.dapps.douban.com/pygit2.git@3a8a145f634fb86673fd6df26677622771bcb2d1#egg=pygit2
 python-magic>=0.4.3
