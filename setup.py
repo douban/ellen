@@ -13,7 +13,7 @@ with open('README.md') as long_description_file:
     long_description = long_description_file.read()
 
 install_requires = [
-    'pygit2 == 0.20.0',
+    #'pygit2 == 0.20.0',
     'python-magic >= 0.4.3',
 ]
 
@@ -22,7 +22,7 @@ tests_require = [
 ] + install_requires
 
 dependency_links = [
-    'git+http://code.dapps.douban.com/pygit2.git@3a8a145f634fb86673fd6df26677622771bcb2d1#egg=pygit2-douban',
+    # 'git+http://code.dapps.douban.com/pygit2.git@3a8a145f634fb86673fd6df26677622771bcb2d1#egg=pygit2',
     # 'git+https://github.com/douban/pygit2.git@0674872bfe99c9fcf3dfca5a7ac8ecfc2af8bff9#egg=pygit2-douban',
 ]
 
