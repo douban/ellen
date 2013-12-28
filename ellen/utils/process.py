@@ -72,6 +72,7 @@ class Process(object):
                 continue
             elif isinstance(v, bool):  # v is True
                 cmds.append(k)
+            # FIXME: command line args may be unicode string
             elif isinstance(v, str) or isinstance(v, unicode):
                 cmds.append(k)
                 cmds.append(v)

@@ -68,15 +68,17 @@ def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
 
 
 def _check_author(commit, author):
+    """check author or email"""
     if author and commit.author.name == author:
         return True
-    elif author and commit.author.email == author:  # FIXME: ...
+    elif author and commit.author.email == author:
         return True
     elif not author:
         return True
     return False
 
 
+# FIXME: time & offset ?
 def _check_date(commit, since):
     if since and commit.committer.time > since:
         return True
@@ -93,6 +95,7 @@ def _check_no_merges(commit, no_merges):
     return False
 
 
+# no use yet
 def _check_path(tree, path):
     try:
         entry = tree[path]
