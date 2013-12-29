@@ -114,7 +114,7 @@ class Jagare(object):
     # FIXME: just return result
     def blame(self, ref, path, lineno=None):
         result = blame(self.repository, ref, path, lineno)
-        return self.show(ref), result
+        return result
 
     def format_patch(self, ref, from_ref=None):
         return format_patch(self.repository, ref, from_ref)
