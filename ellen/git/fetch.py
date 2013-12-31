@@ -4,7 +4,7 @@
 from ellen.utils.process import git_with_repo
 
 
-def fetch_repository(repository, env=None):
+def fetch_repository(repository, **kw):
     git = git_with_repo(repository)
-    git.fetch(q=True, env=env)
+    git.fetch(**kw)
 
