@@ -15,6 +15,7 @@ with open('README.md') as long_description_file:
 install_requires = [
     #'pygit2 == 0.20.0',
     'python-magic >= 0.4.3',
+    'mime >= 0.0.3',
 ]
 
 tests_require = [

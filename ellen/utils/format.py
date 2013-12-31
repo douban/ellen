@@ -5,13 +5,13 @@ import re
 import sys
 from datetime import datetime
 
+import mime
 import magic
 
 from ellen.utils.git import PYGIT2_OBJ_TYPE
 
 # from ellen.utils.text import highlight_code # no use yet
 from ellen.utils.text import trunc_utf8
-from ellen.utils.mdiff import mdiff2
 
 
 def format_obj(obj, repository):
@@ -67,8 +67,13 @@ def format_blob(blob, repository):
     d['type'] = 'blob'
     d['data'] = blob.data
     d['size'] = blob.size
-    d['binary'] = blob.is_binary and 'text' not in magic.from_buffer(blob.data,
-                                                                     mime=True)
+    is_binary = blob.is_binary
+    if is_binary:
+        content_type = magic.from_buffer(blob.data, mime=True)
+        plaintext = mime.Types[content_type] if content_type else None
+        text = plaintext[0] if plaintext else None
+        is_binary = text.is_binary if text else is_binary
+    d['binary'] = is_binary
     return d
 
 
