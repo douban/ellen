@@ -70,9 +70,13 @@ def format_blob(blob, repository):
     is_binary = blob.is_binary
     if is_binary:
         content_type = magic.from_buffer(blob.data, mime=True)
-        plaintext = mime.Types[content_type] if content_type else None
-        text = plaintext[0] if plaintext else None
-        is_binary = text.is_binary if text else is_binary
+        # FIXME: dirty hack for 'text/x-python'
+        if content_type and content_type.startswith('text/'):
+            is_binary = False
+        else:
+            plaintext = mime.Types[content_type] if content_type else None
+            text = plaintext[0] if plaintext else None
+            is_binary = text.is_binary if text else is_binary
     d['binary'] = is_binary
     return d
 
