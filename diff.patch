@@ -1,0 +1,34 @@
+diff --git a/ellen/repo.py b/ellen/repo.py
+index 87074e5..26a6af6 100644
+--- a/ellen/repo.py
++++ b/ellen/repo.py
+@@ -26,6 +26,7 @@ from ellen.git.blame import blame
+ from ellen.git.format_patch import format_patch
+ from ellen.git.merge import merge
+ from ellen.git.push import push
++from ellen.utils.text import trunc_utf8
+ 
+ 
+ class Jagare(object):
+@@ -123,10 +124,19 @@ class Jagare(object):
+     def format_blame_line(self, lineno, src_line, hunk):
+         filename = hunk.orig_path
+         sha = hunk.final_commit_id
++        msg = self.repository[sha].message
+         author = hunk.final_committer.name
+-        time = datetime.fromtimestamp(float(hunk.final_committer.time)).strftime('%Y-%m-%d')
++        old_no = hunk.orig_start_line_number
++        time = datetime.fromtimestamp(float(
++            hunk.final_committer.time)).strftime('%Y-%m-%d')
+         email = hunk.final_committer.email
+-        return (sha, author, email, lineno, filename, time, src_line)
++        disp_filename = trunc_utf8(
++            filename.encode('utf-8'), 20).decode('utf-8', 'ignore')
++        disp_msg = trunc_utf8(
++            msg.encode('utf-8'), 30).decode('utf-8', 'ignore')
++        return (sha, author, email, lineno, old_no,
++                filename, disp_filename, msg, disp_msg,
++                time, src_line)
+ 
+     def get_blame(self, ref, path, lineno=None):
+         blame = self.blame(ref, path)
