@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # TODO: refactor this..
-
-
 import urlparse
 from StringIO import StringIO
 
@@ -83,25 +81,12 @@ def ls_tree(repository, ref,
             objtype = 'blob'
         path = "%s/%s" % (path, entry.name) if path else entry.name
 
-        # FIXME: should get .gitmodules first
-        #if path == '.gitmodules':
-        #    submodule_obj = entry
-
-        #if recursive or (req_path and req_path.startswith(path)):
-        if recursive:
-            if objtype == 'tree':
-                _tree = repository[entry.oid]
-                _tree_list = _walk_tree(_tree, path)
-                for _index, _entry in enumerate(_tree_list):
-                    if recursive:
-                        walker.insert(index + _index + 1, _entry)
-                    elif req_path and req_path.startswith(_entry[-1]):
-                        walker.insert(index + _index + 1, _entry)
-                continue
-
-        #if req_path:
-        #    if not path.startswith(req_path):
-        #        continue
+        if recursive and entry.type == GIT_OBJ_TREE:
+            _tree = repository[entry.oid]
+            _tree_list = _walk_tree(_tree, path)
+            for _index, _entry in enumerate(_tree_list):
+                walker.insert(index + _index + 1, _entry)
+            continue
 
         if name_only:
             ret_tree[path] = path
@@ -116,20 +101,8 @@ def ls_tree(repository, ref,
             "name": entry.name
         }
 
-        if item['type'] == 'submodule':
-            section_name = ('submodule "{submodule_name}"'
-                            .format(submodule_name=path))
-
-            if submodule and submodule.has_section(section_name):
-                item['submodule'] = dict(submodule.items(section_name))
-                item['submodule']['host'] = _parse_submodule_url(item['submodule']['url'])
-
-                if item['submodule']['url'].endswith('.git'):
-                    item['submodule']['url'] = item['submodule']['url'][:-4]
-            else:
-                item['submodule'] = {}
-                item['submodule']['host'] = None
-                item['submodule']['url'] = None
+        if entry.type == GIT_OBJ_COMMIT:
+            item['submodule'] = _format_submodule(submodule, path)
 
         if size:
             if objtype == 'blob':
@@ -216,7 +189,9 @@ def _parse_submodule_url(url):
     return netloc
 
 
-def _calc_is_changed(commit, path, ret):
+def _calc_is_changed(commit, path, ret, type):
+    if type == 'blob' and len(commit.parents) > 1:
+        return
     if commit.is_changed([path], no_diff=True)[0]:
         ret[path] = 1
 
@@ -229,7 +204,7 @@ def _format_with_last_commit(repository, ret_tree, to_commit):
     for commit in walker:
 
         for path in paths:
-            _calc_is_changed(commit, path, ret)
+            _calc_is_changed(commit, path, ret, ret_tree[path]['type'])
 
         if not ret:
             continue
@@ -240,3 +215,26 @@ def _format_with_last_commit(repository, ret_tree, to_commit):
         if not paths:
             break
         ret = {}
+
+
+def _ls_tree(tree, path):
+    return
+
+
+def _format_submodule(modules, path):
+    submodule = {}
+    submodule['host'] = None
+    submodule['url'] = None
+
+    section_name = ('submodule "{submodule_name}"'.format(submodule_name=path))
+    if modules and modules.has_section(section_name):
+        submodule.update(dict(modules.items(section_name)))
+
+    url = submodule.get('url')
+    if url:
+        submodule['host'] = _parse_submodule_url(submodule['url'])
+        if url.endswith('.git'):
+            submodule['url'] = url[:-4]
+
+    return submodule
+
