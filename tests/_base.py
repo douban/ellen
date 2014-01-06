@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import unittest
 import os
 import shutil
 import tempfile
@@ -16,7 +17,7 @@ BARE_REPO_BRANCHES = [BARE_REPO_OTHER_BRANCH, 'master']
 BARE_REPO_TAGS = ('tag1',)
 
 
-class TempTest(object):
+class TempTest(unittest.TestCase):
 
     def init_temp_path(self):
         self.temp_paths = []

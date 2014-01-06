@@ -114,7 +114,14 @@ class Jagare(object):
 
     # FIXME: just return result
     def blame(self, ref, path, lineno=None):
-        result = blame(self.repository, ref, path, lineno)
+        commit = self.repository.revparse_single(ref)
+        oid = commit.oid
+        if lineno:
+            min_line=max_line=lineno
+            result = blame(self.repository, path, oid,
+                           min_line, max_line)
+        else:
+            result = blame(self.repository, path, oid)
         return result
 
     def format_patch(self, ref, from_ref=None):
