@@ -32,6 +32,8 @@ def resolve_version(repository, version):
             return None
     except KeyError:
         return None
+    except ValueError:
+        return None
     return commit.hex
 
 

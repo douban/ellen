@@ -24,6 +24,7 @@ from ellen.git.blame import blame
 from ellen.git.format_patch import format_patch
 from ellen.git.merge import merge
 from ellen.git.push import push
+from ellen.git.fetch import fetch_repository
 
 
 class Jagare(object):
@@ -224,6 +225,9 @@ class Jagare(object):
         target = {remote.name: remote for remote in self.remotes()}.get(name)
         if target:
             target.fetch()
+
+    def fetch_(self, **kw):
+        return fetch_repository(self.repository, **kw)
 
     def merge(self, ref, msg='automerge', commit_msg='',
               no_ff=False, _raise=True, _env=None):
