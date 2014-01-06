@@ -146,7 +146,9 @@ class Jagare(object):
         src = blob['data'].splitlines()
         if lineno:
             hunk = blame.for_line(lineno)
-            return []
+            src_line = src[int(lineno)-1]
+            return self.format_blame_line(lineno,
+                                          src_line, hunk)
         # format with raw_text
         else:
             result = []
