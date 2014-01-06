@@ -134,9 +134,14 @@ class Jagare(object):
             filename.encode('utf-8'), 20).decode('utf-8', 'ignore')
         disp_msg = trunc_utf8(
             msg.encode('utf-8'), 30).decode('utf-8', 'ignore')
-        return (sha, author, email, lineno, old_no,
+
+        keys = ('sha', 'author', 'email', 'lineno', 'old_no',
+                'filename', 'disp_filename', 'summary', 'disp_summary',
+                'time', 'src_line')
+
+        return dict(zip(keys, (sha, author, email, lineno, old_no,
                 filename, disp_filename, msg, disp_msg,
-                time, src_line)
+                time, src_line)))
 
     def get_blame(self, ref, path, lineno=None):
         blame = self.blame(ref, path)
