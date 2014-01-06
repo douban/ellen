@@ -132,8 +132,8 @@ class Jagare(object):
         # format with raw_text
         else:
             result = []
-            for line in src:
-               lineno = src.index(line) + 1
+            for idx, line in enumerate(src):
+               lineno = idx + 1
                src_line = line
                hunk = blame.for_line(lineno)
                filename = hunk.orig_path
