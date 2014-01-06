@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from itertools import izip, count
 
 from pygit2 import Repository
 from pygit2 import GIT_OBJ_COMMIT
@@ -113,15 +114,33 @@ class Jagare(object):
         return commits
 
     # FIXME: just return result
-    def blame(self, ref, path, lineno=None):
+    def blame(self, ref, path):
         commit = self.repository.revparse_single(ref)
         oid = commit.oid
+        result = blame(self.repository, path, oid)
+        return result
+
+    def formatted_blame(self, ref, path, lineno=None):
+        blame = self.blame(ref, path)
+        blob = self.show("%s:%s" % (ref, path))
+        if not blob:
+            return None
+        src = blob['data'].splitlines()
         if lineno:
-            min_line=max_line=lineno
-            result = blame(self.repository, path, oid,
-                           min_line, max_line)
+            hunk = blame.for_line(lineno)
+            return []
+        # format with raw_text
         else:
-            result = blame(self.repository, path, oid)
+            result = []
+            for line in src:
+               lineno = src.index(line) + 1
+               src_line = line
+               hunk = blame.for_line(lineno)
+               filename = hunk.orig_path
+               sha = hunk.final_commit_id
+               author = hunk.final_committer.name
+               email = hunk.final_committer.email
+               result.append((sha, author, email, lineno, filename, src_line))
         return result
 
     def format_patch(self, ref, from_ref=None):
