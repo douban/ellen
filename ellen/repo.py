@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from datetime import datetime
 from itertools import izip, count
 
 from pygit2 import Repository
@@ -120,7 +121,15 @@ class Jagare(object):
         result = blame(self.repository, path, oid)
         return result
 
-    def formatted_blame(self, ref, path, lineno=None):
+    def format_blame_line(self, lineno, src_line, hunk):
+        filename = hunk.orig_path
+        sha = hunk.final_commit_id
+        author = hunk.final_committer.name
+        time = datetime.fromtimestamp(float(hunk.final_committer.time)).strftime('%Y-%m-%d')
+        email = hunk.final_committer.email
+        return (sha, author, email, lineno, filename, time, src_line)
+
+    def get_blame(self, ref, path, lineno=None):
         blame = self.blame(ref, path)
         blob = self.show("%s:%s" % (ref, path))
         if not blob:
@@ -136,11 +145,8 @@ class Jagare(object):
                lineno = idx + 1
                src_line = line
                hunk = blame.for_line(lineno)
-               filename = hunk.orig_path
-               sha = hunk.final_commit_id
-               author = hunk.final_committer.name
-               email = hunk.final_committer.email
-               result.append((sha, author, email, lineno, filename, src_line))
+               result.append(self.format_blame_line(
+                   lineno, src_line, hunk))
         return result
 
     def format_patch(self, ref, from_ref=None):
