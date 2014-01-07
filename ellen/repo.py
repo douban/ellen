@@ -3,7 +3,6 @@
 
 import os
 from datetime import datetime
-from itertools import izip, count
 
 from pygit2 import Repository
 from pygit2 import GIT_OBJ_COMMIT
@@ -115,54 +114,8 @@ class Jagare(object):
         return commits
 
     # FIXME: just return result
-    def blame(self, ref, path):
-        commit = self.repository.revparse_single(ref)
-        oid = commit.oid
-        result = blame(self.repository, path, oid)
-        return result
-
-    def format_blame_line(self, lineno, src_line, hunk):
-        filename = hunk.orig_path
-        sha = hunk.final_commit_id
-        msg = self.repository[sha].message
-        author = hunk.final_committer.name
-        old_no = hunk.orig_start_line_number
-        time = datetime.fromtimestamp(float(
-            hunk.final_committer.time)).strftime('%Y-%m-%d')
-        email = hunk.final_committer.email
-        disp_filename = trunc_utf8(
-            filename.encode('utf-8'), 20).decode('utf-8', 'ignore')
-        disp_msg = trunc_utf8(
-            msg.encode('utf-8'), 30).decode('utf-8', 'ignore')
-
-        keys = ('sha', 'author', 'email', 'lineno', 'old_no',
-                'filename', 'disp_filename', 'summary', 'disp_summary',
-                'time', 'src_line')
-
-        return dict(zip(keys, (sha, author, email, lineno, old_no,
-                filename, disp_filename, msg, disp_msg,
-                time, src_line)))
-
-    def get_blame(self, ref, path, lineno=None):
-        blame = self.blame(ref, path)
-        blob = self.show("%s:%s" % (ref, path))
-        if not blob:
-            return None
-        src = blob['data'].splitlines()
-        if lineno:
-            hunk = blame.for_line(lineno)
-            src_line = src[int(lineno)-1]
-            return self.format_blame_line(lineno,
-                                          src_line, hunk)
-        # format with raw_text
-        else:
-            result = []
-            for idx, line in enumerate(src):
-               lineno = idx + 1
-               src_line = line
-               hunk = blame.for_line(lineno)
-               result.append(self.format_blame_line(
-                   lineno, src_line, hunk))
+    def blame(self, ref, path, lineno=None):
+        result = blame(self.repository, ref, path, lineno=lineno)
         return result
 
     def format_patch(self, ref, from_ref=None):
