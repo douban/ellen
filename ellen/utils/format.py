@@ -248,3 +248,24 @@ def _format_pygit2_signature(signature):
 def _format_pygit2_reference(reference):
     d = {}
     return d
+
+
+def format_pygit2_blame(blame):
+    d = {}
+    return d
+
+
+def format_blame_hunk(hunk, repository):
+    d = {}
+    d['lines_in_hunk'] = hunk.lines_in_hunk
+    d['final_commit_id'] = hunk.final_commit_id
+    d['final_start_line_number'] = hunk.final_start_line_number
+    d['final_committer'] = _format_pygit2_signature(hunk.final_committer)
+    d['orig_commit_id'] = hunk.orig_commit_id
+    d['orig_path'] = hunk.orig_path
+    d['orig_start_line_number'] = hunk.orig_start_line_number
+    # FIXME: why orig_committer is None?
+    #d['orig_committer'] = _format_pygit2_signature(hunk.orig_committer)
+    d['boundary'] = hunk.boundary
+    return d
+

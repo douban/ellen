@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from datetime import datetime
 
 from pygit2 import Repository
 from pygit2 import GIT_OBJ_COMMIT
@@ -25,7 +26,7 @@ from ellen.git.format_patch import format_patch
 from ellen.git.merge import merge
 from ellen.git.push import push
 from ellen.git.fetch import fetch_repository
-
+from ellen.utils.text import trunc_utf8
 
 class Jagare(object):
     ''' pygit2 and git commands wrapper '''
@@ -114,7 +115,7 @@ class Jagare(object):
 
     # FIXME: just return result
     def blame(self, ref, path, lineno=None):
-        result = blame(self.repository, ref, path, lineno)
+        result = blame(self.repository, ref, path, lineno=lineno)
         return result
 
     def format_patch(self, ref, from_ref=None):
