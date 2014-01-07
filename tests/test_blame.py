@@ -13,12 +13,12 @@ class TestBlame(BareRepoTest):
         for node in blobs:
             blame_ret = repo.blame('master', path=node)
             if node == 'new.txt':
-                for hunk in blame_ret:
+                for hunk in blame_ret['hunks']:
                     self.assertEquals('4bc90207e76d68d5cda435e67c5f85a0ce710f44',
-                                      hunk.final_commit_id)
-                    self.assertEquals(hunk.final_committer.email, 'xutao@douban.com')
+                                      hunk['final_commit_id'])
+                    self.assertEquals(hunk['final_committer']['email'], 'xutao@douban.com')
             if node == 'README.md':
-                for hunk in blame_ret:
+                for hunk in blame_ret['hunks']:
                     self.assertEquals('e9f35005ca7d004d87732598f761b1be3b9d1c61',
-                                      hunk.final_commit_id)
-                    self.assertEquals(hunk.final_committer.email, 'xutao@douban.com')
+                                      hunk['final_commit_id'])
+                    self.assertEquals(hunk['final_committer']['email'], 'xutao@douban.com')
