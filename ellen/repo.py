@@ -2,11 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from datetime import datetime
-
 from pygit2 import Repository
 from pygit2 import GIT_OBJ_COMMIT
-
 from ellen.utils import JagareError
 from ellen.utils.format import format_obj
 from ellen.utils.git import resolve_version
@@ -26,7 +23,7 @@ from ellen.git.format_patch import format_patch
 from ellen.git.merge import merge
 from ellen.git.push import push
 from ellen.git.fetch import fetch_repository
-from ellen.utils.text import trunc_utf8
+
 
 class Jagare(object):
     ''' pygit2 and git commands wrapper '''
@@ -227,8 +224,8 @@ class Jagare(object):
         if target:
             target.fetch()
 
-    def fetch_(self, **kw):
-        return fetch_repository(self.repository, **kw)
+    def fetch_(self, *w, **kw):
+        return fetch_repository(self.repository, *w, **kw)
 
     def merge(self, ref, msg='automerge', commit_msg='',
               no_ff=False, _raise=True, _env=None):
