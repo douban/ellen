@@ -20,7 +20,7 @@ from ellen.git.init import init_repository
 from ellen.git.archive import archive_repository
 from ellen.git.blame import blame
 from ellen.git.format_patch import format_patch
-from ellen.git.merge import merge, tree_merge, merge_head, merge_commits
+from ellen.git.merge import merge, merge_tree, merge_head, merge_commits
 from ellen.git.push import push
 from ellen.git.fetch import fetch_repository
 
@@ -232,8 +232,8 @@ class Jagare(object):
         return merge(self.repository, ref, msg, commit_msg,
                      no_ff, _raise, _env)
 
-    def tree_merge(self, ours, theirs):
-        return tree_merge(self.repository, ours, theirs)
+    def merge_tree(self, ours, theirs):
+        return merge_tree(self.repository, ours, theirs)
 
     def merge_head(self, ref):
         return merge_head(self.repository, ref)

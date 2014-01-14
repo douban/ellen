@@ -37,7 +37,7 @@ class TestMerge(BareRepoTest):
     def test_merge_no_ff(self):
         self._merge(no_ff=True)
 
-    def test_tree_merge(self):
+    def test_merge_tree(self):
         repo = Jagare(self.path)
         BR = 'br_test_merge'
         path = self.get_temp_path()
@@ -51,8 +51,8 @@ class TestMerge(BareRepoTest):
 
         commit_something(path, branch=BR)
         repo.update_head(BARE_REPO_OTHER_BRANCH)
-        index = repo.tree_merge(repo.head.target.hex, BR)
-        assert index.has_conflicts == False
+        index = repo.merge_tree(repo.head.target.hex, BR)
+        assert not index['has_conflicts']
 
     def test_merge_head(self):
         repo = Jagare(self.path)
@@ -69,7 +69,7 @@ class TestMerge(BareRepoTest):
         commit_something(path, branch=BR)
         repo.update_head(BARE_REPO_OTHER_BRANCH)
         merge_result = repo.merge_head(BR)
-        assert merge_result.is_fastforward
+        assert merge_result['is_fastforward']
 
     def test_merge_commits(self):
         repo = Jagare(self.path)
@@ -86,4 +86,4 @@ class TestMerge(BareRepoTest):
         commit_something(path, branch=BR)
         repo.update_head(BARE_REPO_OTHER_BRANCH)
         merge_index = repo.merge_commits(repo.head.target.hex, BR)
-        assert not merge_index.has_conflicts
+        assert not merge_index['has_conflicts']
