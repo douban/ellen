@@ -52,7 +52,7 @@ class TestMerge(BareRepoTest):
         commit_something(path, branch=BR)
         repo.update_head(BARE_REPO_OTHER_BRANCH)
         index = repo.merge_tree(repo.head.target.hex, BR)
-        assert not index['has_conflicts']
+        assert index['has_conflicts'] == False
 
     def test_merge_head(self):
         repo = Jagare(self.path)
@@ -86,4 +86,4 @@ class TestMerge(BareRepoTest):
         commit_something(path, branch=BR)
         repo.update_head(BARE_REPO_OTHER_BRANCH)
         merge_index = repo.merge_commits(repo.head.target.hex, BR)
-        assert not merge_index['has_conflicts']
+        assert merge_index['has_conflicts'] == False
