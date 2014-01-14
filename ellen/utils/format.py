@@ -269,3 +269,15 @@ def format_blame_hunk(hunk, repository):
     d['boundary'] = hunk.boundary
     return d
 
+
+def format_merge_result(merge_result):
+    d = {}
+    d['is_uptodate'] = merge_result.is_uptodate
+    d['is_fastforward'] = merge_result.is_fastforward
+    d['fastforward_oid'] = merge_result.fastforward_oid
+    return d
+
+def format_index(merge_index):
+    d = {}
+    d['has_conflicts'] = merge_index.has_conflicts
+    return d
