@@ -277,7 +277,7 @@ def format_merge_result(merge_result):
     d['fastforward_oid'] = merge_result.fastforward_oid
     return d
 
-def format_merge_index(merge_index):
+def format_index(merge_index):
     d = {}
     d['has_conflicts'] = merge_index.has_conflicts
     return d
