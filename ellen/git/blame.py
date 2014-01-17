@@ -23,35 +23,41 @@ def blame_(repository, ref, path, lineno=None):
 
 
 """
-    /** Normal blame, the default */
-    GIT_BLAME_NORMAL = 0,
-    /** Track lines that have moved within a file (like `git blame -M`).
-        * NOT IMPLEMENTED. */
-    GIT_BLAME_TRACK_COPIES_SAME_FILE = (1<<0),
-    /** Track lines that have moved across files in the same commit (like `git blame -C`).
-        * NOT IMPLEMENTED. */
-    GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES = (1<<1),
-    /** Track lines that have been copied from another file that exists in the
-        * same commit (like `git blame -CC`). Implies SAME_FILE.
-        * NOT IMPLEMENTED. */
-    GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES = (1<<2),
-    /** Track lines that have been copied from another file that exists in *any*
-        * commit (like `git blame -CCC`). Implies SAME_COMMIT_COPIES.
-        * NOT IMPLEMENTED. */
-    GIT_BLAME_TRACK_COPIES_ANY_COMMIT_COPIES = (1<<3),
+/** Normal blame, the default */
+GIT_BLAME_NORMAL = 0,
+
+/** Track lines that have moved within a file (like `git blame -M`).
+  * NOT IMPLEMENTED. */
+GIT_BLAME_TRACK_COPIES_SAME_FILE = (1<<0),
+
+/** Track lines that have moved across files in the same commit (like `git blame -C`).
+  * NOT IMPLEMENTED. */
+GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES = (1<<1),
+
+/** Track lines that have been copied from another file that exists in the
+  * same commit (like `git blame -CC`). Implies SAME_FILE.
+  * NOT IMPLEMENTED. */
+GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES = (1<<2),
+
+/** Track lines that have been copied from another file that exists in *any*
+  * commit (like `git blame -CCC`). Implies SAME_COMMIT_COPIES.
+  * NOT IMPLEMENTED. */
+GIT_BLAME_TRACK_COPIES_ANY_COMMIT_COPIES = (1<<3),
 """
+
+
 def blame(repository, ref, path, lineno, **kw):
     """ pygit2 blame """
     blob = repository.revparse_single("%s:%s" % (ref, path))
-    if not blob:
+    if not blob or blob.is_binary:
         return None
-    # FIXME: check binary
     lines = blob.data.splitlines()
     if lineno:
         if lineno <= 0 and lineno > len(lines):
             return None
 
-    flags = GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES | GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES
+    flags = (GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES
+             | GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES)
     commit = repository.revparse_single(ref)
     if not commit:
         return None
