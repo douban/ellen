@@ -50,7 +50,7 @@ def diff_wrapper(repository, *w, **kw):
         return format_diff(d)
 
     except JagareError:
-        return []
+        return {}
 
 
 def diff(repository, ref, from_ref=None, **kwargs):
