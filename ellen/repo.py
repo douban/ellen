@@ -129,11 +129,11 @@ class Jagare(object):
         return diff(self.repository, *w, **kw)
 
     def resolve_commit(self, version):
-        version = version.strip()
+        version = version.strip() if version else ''
         return resolve_version(self.repository, version)
 
     def resolve_type(self, version):
-        version = version.strip()
+        version = version.strip() if version else ''
         return resolve_type(self.repository, version)
 
     def create_branch(self, name, ref, force=False):
