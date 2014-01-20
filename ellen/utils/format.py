@@ -274,8 +274,10 @@ def format_merge_result(merge_result):
     d = {}
     d['is_uptodate'] = merge_result.is_uptodate
     d['is_fastforward'] = merge_result.is_fastforward
-    d['fastforward_oid'] = merge_result.fastforward_oid
+    d['fastforward_oid'] = (merge_result.fastforward_oid.hex
+                            if merge_result.fastforward_oid else '')
     return d
+
 
 def format_index(merge_index):
     d = {}

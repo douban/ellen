@@ -2,12 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 from pygit2 import Repository
 from pygit2 import GIT_OBJ_COMMIT
-from ellen.utils import JagareError
-from ellen.utils.format import format_obj
-from ellen.utils.git import resolve_version
-from ellen.utils.git import resolve_type
+
 from ellen.git.tree import ls_tree
 from ellen.git.rev_list import rev_list
 from ellen.git.rename import detect_renamed
@@ -23,6 +21,9 @@ from ellen.git.format_patch import format_patch
 from ellen.git.merge import merge, merge_tree, merge_head, merge_commits
 from ellen.git.push import push
 from ellen.git.fetch import fetch_repository
+from ellen.utils import JagareError
+from ellen.utils.format import format_obj
+from ellen.utils.git import resolve_version, resolve_type
 
 
 class Jagare(object):
@@ -110,10 +111,8 @@ class Jagare(object):
             pass
         return commits
 
-    # FIXME: just return result
     def blame(self, ref, path, lineno=None):
-        result = blame(self.repository, ref, path, lineno=lineno)
-        return result
+        return blame(self.repository, ref, path, lineno=lineno)
 
     def format_patch(self, ref, from_ref=None):
         return format_patch(self.repository, ref, from_ref)
