@@ -259,3 +259,16 @@ def repository(path):
     except KeyError:
         raise JagareError('repo %s not exists' % path)
     return repo
+
+
+def is_git_dir(d):
+    """ This is taken from the git setup.c:is_git_directory. """
+    isdir = os.path.isdir
+    join = os.path.join
+    isfile = os.path.isfile
+    islink = os.path.islink
+    if isdir(d) and isdir(join(d, 'objects')) and isdir(join(d, 'refs')):
+        headref = join(d, 'HEAD')
+        return isfile(headref) or (islink(headref) and
+                                   os.readlink(headref).startswith('refs'))
+    return False

@@ -18,3 +18,5 @@ build
 
 # others
 tmp
+.ropeproject
+venv/
