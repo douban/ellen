@@ -4,7 +4,8 @@
 from ellen.utils.process import git_with_repo
 from ellen.utils.format import (format_blame,
                                 format_blame_hunk,
-                                format_blob)
+                                format_blob,
+                                is_blob_binary)
 from pygit2 import (GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES,
                     GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES)
 
@@ -49,7 +50,7 @@ GIT_BLAME_TRACK_COPIES_ANY_COMMIT_COPIES = (1<<3),
 def blame(repository, ref, path, lineno, **kw):
     """ pygit2 blame """
     blob = repository.revparse_single("%s:%s" % (ref, path))
-    if not blob or blob.is_binary:
+    if not blob or is_blob_binary(blob):
         return None
     lines = blob.data.splitlines()
     if lineno:
@@ -79,4 +80,3 @@ def blame(repository, ref, path, lineno, **kw):
     result = {'blob': format_blob(blob, repository),
               'hunks': hunks}
     return result
-

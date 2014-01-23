@@ -67,17 +67,7 @@ def format_blob(blob, repository):
     d['type'] = 'blob'
     d['data'] = blob.data
     d['size'] = blob.size
-    is_binary = blob.is_binary
-    if is_binary:
-        content_type = magic.from_buffer(blob.data, mime=True)
-        # FIXME: dirty hack for 'text/x-python'
-        if content_type and content_type.startswith('text/'):
-            is_binary = False
-        else:
-            plaintext = mime.Types[content_type] if content_type else None
-            text = plaintext[0] if plaintext else None
-            is_binary = text.is_binary if text else is_binary
-    d['binary'] = is_binary
+    d['binary'] = is_blob_binary(blob)
     return d
 
 
@@ -282,3 +272,17 @@ def format_index(merge_index):
     d = {}
     d['has_conflicts'] = merge_index.has_conflicts
     return d
+
+
+def is_blob_binary(blob):
+    is_binary = blob.is_binary
+    if is_binary:
+        content_type = magic.from_buffer(blob.data, mime=True)
+        # FIXME: dirty hack for 'text/x-python'
+        if content_type and content_type.startswith('text/'):
+            is_binary = False
+        else:
+            plaintext = mime.Types[content_type] if content_type else None
+            text = plaintext[0] if plaintext else None
+            is_binary = text.is_binary if text else is_binary
+    return is_binary
