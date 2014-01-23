@@ -264,8 +264,7 @@ def format_blame_hunk(hunk, repository):
     d['orig_commit_id'] = hunk.orig_commit_id
     d['orig_path'] = hunk.orig_path
     d['orig_start_line_number'] = hunk.orig_start_line_number
-    # FIXME: why orig_committer is None?
-    #d['orig_committer'] = _format_pygit2_signature(hunk.orig_committer)
+    d['orig_committer'] = _format_pygit2_signature(hunk.orig_committer)
     d['boundary'] = hunk.boundary
     return d
 
