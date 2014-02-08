@@ -21,6 +21,7 @@ from ellen.git.format_patch import format_patch
 from ellen.git.merge import merge, merge_tree, merge_head, merge_commits
 from ellen.git.push import push
 from ellen.git.fetch import fetch_repository
+from ellen.git.hook import update_hooks
 from ellen.utils import JagareError
 from ellen.utils.format import format_obj
 from ellen.utils.git import resolve_version, resolve_type
@@ -250,6 +251,9 @@ class Jagare(object):
     def create_tag(self, name, ref, author_name, author_email, message):
         return create_tag(self.repository, name, ref,
                           author_name, author_email, message)
+
+    def update_hooks(self, path):
+        return update_hooks(self.repository, path)
 
 
 def repository(path):
