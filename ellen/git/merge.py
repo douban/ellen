@@ -30,7 +30,7 @@ def merge_tree(repository, ours, theirs):
 
 def merge_head(repository, ref):
     target = repository.revparse_single(ref)
-    oid = target.oid
+    oid = target.id
     merge_result = repository.merge(oid)
     return format_merge_result(merge_result)
 

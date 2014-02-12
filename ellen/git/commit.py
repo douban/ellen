@@ -51,7 +51,7 @@ def create_commit(repository, branch, parent,
     if flag:
         for entry in root.walk():
             entry.write(repository, parent_commit if parent_commit else None)
-        tree_oid = root.oid
+        tree_oid = root.id
         signature = Signature(author_name, author_email)
         commit = repository.create_commit("refs/heads/%s" % branch,
                                           signature, signature, message,

@@ -16,7 +16,7 @@ class TreeNode(object):
         self.type = type
         self.parent = parent
         self.index = {}
-        self.oid = None
+        self.id = None
         self.action = action
         self.builder = None
         self.content = None
@@ -108,7 +108,7 @@ def get_treebuilder(repository, commit, node):
         except KeyError:
             pass
     if new:
-        tree = repository[new.oid]
+        tree = repository[new.id]
         tb = repository.TreeBuilder(tree)
     else:
         tb = repository.TreeBuilder()
@@ -118,13 +118,13 @@ def get_treebuilder(repository, commit, node):
 def write_tree(repository, commit, node):
     if node.type != "tree":
         return None
-    if node.oid:
+    if node.id:
         return None
     if not node.builder:
         node.builder = get_treebuilder(repository, commit, node)
     for entry in node.children:
         path = entry.name
-        oid = entry.oid
+        oid = entry.id
         if entry.type == 'tree':
             mode = GIT_FILEMODE_TREE
         else:
@@ -136,17 +136,17 @@ def write_tree(repository, commit, node):
     if node.path and len(node.builder) <= 0:
         node.action = 'remove'
         return None
-    node.oid = node.builder.write()
+    node.id = node.builder.write()
 
 
 def write_blob(repository, node):
     if node.type != 'blob':
         return None
-    if node.oid:
+    if node.id:
         return None
     if node.action == 'remove':
         return None
-    node.oid = repository.write(GIT_OBJ_BLOB, node.content)
+    node.id = repository.write(GIT_OBJ_BLOB, node.content)
 
 
 def init_root():

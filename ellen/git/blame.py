@@ -62,7 +62,7 @@ def blame(repository, ref, path, lineno, **kw):
     commit = repository.revparse_single(ref)
     if not commit:
         return None
-    newest_commit = commit.oid
+    newest_commit = commit.id
     blame = repository.blame(path, flags, newest_commit=newest_commit, **kw)
     if not blame:
         return None

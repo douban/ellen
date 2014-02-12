@@ -26,13 +26,13 @@ def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
     if to_commit.type == GIT_OBJ_TAG:
         to_commit = repository[to_commit.target]
     next_commit = None
-    walker = repository.walk(to_commit.oid, walk_order)
+    walker = repository.walk(to_commit.id, walk_order)
     if from_ref:
         try:
             from_commit = repository.revparse_single(from_ref)
             if from_commit.type == GIT_OBJ_TAG:
                 from_commit = repository[from_commit.target]
-            walker.hide(from_commit.oid)
+            walker.hide(from_commit.id)
         except (KeyError, ValueError):
             from_commit = None
 
@@ -122,13 +122,13 @@ def _check_file_change(commit, path):
     #    c_entry = commit_tree[path]
     #    for p in parents:
     #        parent_tree = p.tree
-    #        if commit_tree.oid == parent_tree.oid:
+    #        if commit_tree.id == parent_tree.id:
     #            return False
     #        p_entry = _check_path(parent_tree, path)
     #        if not p_entry:
     #            count += 1
     #            continue
-    #        if p_entry.oid != c_entry.oid:
+    #        if p_entry.id != c_entry.id:
     #            count += 1
     #    if count == len(parents):
     #        return True
