@@ -22,9 +22,9 @@ def merge_tree(repository, ours, theirs):
     theirs_tree = theirs.tree
     ours = repository.revparse_single(ours)
     ours_tree = ours.tree
-    merge_base = repository.merge_base(theirs.hex,
-                                       ours.hex)
-    merge_base_tree = repository.get(merge_base.hex).tree
+    merge_base = repository.merge_base(str(theirs.id),
+                                       str(ours.id))
+    merge_base_tree = repository.get(str(merge_base)).tree
     index = ours_tree.merge(theirs_tree, merge_base_tree)
     return format_index(index)
 

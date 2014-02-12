@@ -25,15 +25,15 @@ def format_commit(commit, repository):
     d = {}
     d['type'] = 'commit'
     # FIXME: use parents
-    d['parent'] = [p.hex for p in commit.parents] if commit.parents else []
-    d['parents'] = [p.hex for p in commit.parents] if commit.parents else []
-    d['tree'] = commit.tree.hex
+    d['parent'] = [str(p.id) for p in commit.parents] if commit.parents else []
+    d['parents'] = [str(p.id) for p in commit.parents] if commit.parents else []
+    d['tree'] = str(commit.tree.id)
     d['committer'] = _format_pygit2_signature(commit.committer)
     d['author'] = _format_pygit2_signature(commit.author)
     d['email'] = commit.author.email  # FIXME
-    d['commit'] = commit.hex  # FIXME
+    d['commit'] = str(commit.id)  # FIXME
     d['message'], _, d['body'] = commit.message.strip().partition('\n\n')
-    d['sha'] = commit.hex
+    d['sha'] = str(commit.id)
     return d
 
 
@@ -51,7 +51,7 @@ def format_tree(tree, repository):
         else:
             objtype = 'blob'
         r = {
-            'sha': entry.hex,
+            'sha': str(entry.id),
             'mode': mode,
             'type': objtype,
             'path': entry.name
@@ -63,7 +63,7 @@ def format_tree(tree, repository):
 
 def format_blob(blob, repository):
     d = {}
-    d['sha'] = blob.hex
+    d['sha'] = str(blob.id)
     d['type'] = 'blob'
     d['data'] = blob.data
     d['size'] = blob.size
@@ -75,11 +75,11 @@ def format_tag(tag, repository):
     d = {}
     d['name'] = tag.name
     d['tag'] = tag.name
-    d['target'] = tag.target.hex
+    d['target'] = str(tag.target)
     d['type'] = 'tag'
     d['tagger'] = _format_pygit2_signature(tag.tagger)
     d['message'], _, d['body'] = tag.message.strip().partition('\n\n')
-    d['sha'] = tag.hex
+    d['sha'] = str(tag.id)
     return d
 
 
@@ -88,7 +88,7 @@ def format_lw_tag(ref, tag, repository):
     d = {}
     d['name'] = _format_short_reference_name(ref)
     d['tag'] = d['name']
-    d['object'] = tag.hex
+    d['object'] = str(tag.id)
     d['type'] = 'commit'  # really useful ?
     d['commit'] = format_commit(tag, repository)
     return d
@@ -263,7 +263,7 @@ def format_merge_result(merge_result):
     d = {}
     d['is_uptodate'] = merge_result.is_uptodate
     d['is_fastforward'] = merge_result.is_fastforward
-    d['fastforward_oid'] = (merge_result.fastforward_oid.hex
+    d['fastforward_oid'] = (str(merge_result.fastforward_oid)
                             if merge_result.fastforward_oid else '')
     return d
 
