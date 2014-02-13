@@ -53,12 +53,12 @@ def create_commit(repository, branch, parent,
             entry.write(repository, parent_commit if parent_commit else None)
         tree_oid = root.id
         signature = Signature(author_name, author_email)
-        commit = repository.create_commit("refs/heads/%s" % branch,
+        commit_oid = repository.create_commit("refs/heads/%s" % branch,
                                           signature, signature, message,
                                           tree_oid, parents_sha)
         master = repository.lookup_reference("refs/heads/%s" % branch)
-        master.target = str(commit)
-        master.log_append(str(commit), signature, reflog)
+        master.target = str(commit_oid)
+        master.log_append(str(commit_oid), signature, reflog)
         return ret
     return []
 
