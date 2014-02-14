@@ -190,7 +190,7 @@ def _parse_submodule_url(url):
 
 
 def _calc_is_changed(commit, path, ret, type):
-    if type == 'blob' and len(commit.parents) > 1:
+    if len(commit.parents) > 1:
         return
     if commit.is_changed([path], no_diff=True)[0]:
         ret[path] = 1
@@ -237,4 +237,3 @@ def _format_submodule(modules, path):
             submodule['url'] = url[:-4]
 
     return submodule
-
