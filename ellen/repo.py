@@ -220,9 +220,12 @@ class Jagare(object):
             remote.fetch()
 
     def fetch(self, name):
-        target = {remote.name: remote for remote in self.remotes()}.get(name)
-        if target:
-            target.fetch()
+        try:
+            target = {remote.name: remote
+                      for remote in self.remotes()}.get(name)
+            return target.fetch() if target else None
+        except OSError:
+            pass
 
     def fetch_(self, *w, **kw):
         return fetch_repository(self.repository, *w, **kw)
