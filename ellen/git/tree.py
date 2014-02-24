@@ -55,7 +55,7 @@ def ls_tree(repository, ref,
 
     if req_path:
         tree_entry = tree_obj[req_path]
-        tree_obj = repository[tree_entry.oid]
+        tree_obj = repository[tree_entry.id]
         walker = _walk_tree(tree_obj, req_path)
     else:
         walker = _walk_tree(tree_obj)
@@ -82,7 +82,7 @@ def ls_tree(repository, ref,
         path = "%s/%s" % (path, entry.name) if path else entry.name
 
         if recursive and entry.type == GIT_OBJ_TREE:
-            _tree = repository[entry.oid]
+            _tree = repository[entry.id]
             _tree_list = _walk_tree(_tree, path)
             for _index, _entry in enumerate(_tree_list):
                 walker.insert(index + _index + 1, _entry)
@@ -106,7 +106,7 @@ def ls_tree(repository, ref,
 
         if size:
             if objtype == 'blob':
-                blob = repository[entry.oid]
+                blob = repository[entry.id]
                 item['size'] = blob.size
             else:
                 item['size'] = '-'
@@ -197,7 +197,7 @@ def _calc_is_changed(commit, path, ret, type):
 
 
 def _format_with_last_commit(repository, ret_tree, to_commit):
-    walker = repository.walk(to_commit.oid, GIT_SORT_TOPOLOGICAL)
+    walker = repository.walk(to_commit.id, GIT_SORT_TOPOLOGICAL)
     paths = [k for k, v in ret_tree.iteritems()]
     ret = {}
 

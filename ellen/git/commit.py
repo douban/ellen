@@ -25,7 +25,7 @@ def create_commit(repository, branch, parent,
     parent_commit = None
     if not repository.is_empty:
         parent_commit = repository.revparse_single(parent)
-        parents_sha.append(parent_commit.hex)
+        parents_sha.append(str(parent_commit.id))
 
     ret = []
     flag = False
@@ -51,14 +51,14 @@ def create_commit(repository, branch, parent,
     if flag:
         for entry in root.walk():
             entry.write(repository, parent_commit if parent_commit else None)
-        tree_oid = root.oid
+        tree_oid = root.id
         signature = Signature(author_name, author_email)
-        commit = repository.create_commit("refs/heads/%s" % branch,
+        commit_oid = repository.create_commit("refs/heads/%s" % branch,
                                           signature, signature, message,
                                           tree_oid, parents_sha)
         master = repository.lookup_reference("refs/heads/%s" % branch)
-        master.target = commit.hex
-        master.log_append(commit.hex, signature, reflog)
+        master.target = str(commit_oid)
+        master.log_append(str(commit_oid), signature, reflog)
         return ret
     return []
 
