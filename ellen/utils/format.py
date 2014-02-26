@@ -25,8 +25,13 @@ def format_commit(commit, repository):
     d = {}
     d['type'] = 'commit'
     # FIXME: use parents
-    d['parent'] = [str(p.id) for p in commit.parents] if commit.parents else []
-    d['parents'] = [str(p.id) for p in commit.parents] if commit.parents else []
+    try:
+        d['parent'] = [str(p.id) for p in commit.parents] if commit.parents else []
+        d['parents'] = [str(p.id) for p in commit.parents] if commit.parents else []
+    except KeyError:
+        # FIXME: pygit2 commit.parents
+        d['parent'] = []
+        d['parents'] = []
     d['tree'] = str(commit.tree.id)
     d['committer'] = _format_pygit2_signature(commit.committer)
     d['author'] = _format_pygit2_signature(commit.author)
