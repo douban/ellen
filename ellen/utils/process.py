@@ -57,7 +57,7 @@ class Process(object):
     def _parse_args(self, *a, **kw):
         cmds = []
         for p in a:
-            if not isinstance(p, str):
+            if not isinstance(p, (str, unicode)):
                 raise KeyError
             cmds.append(p)
 
@@ -73,7 +73,7 @@ class Process(object):
             elif isinstance(v, bool):  # v is True
                 cmds.append(k)
             # FIXME: command line args may be unicode string
-            elif isinstance(v, str) or isinstance(v, unicode):
+            elif isinstance(v, (str, unicode)):
                 cmds.append(k)
                 cmds.append(v)
             else:
