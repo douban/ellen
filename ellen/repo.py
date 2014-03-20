@@ -77,10 +77,11 @@ class Jagare(object):
     def tags(self):
         return self.list_tags(name_only=True)
 
-    # TODO: change to property
-    # FIXME: return [remote.name], and pygit2.remotes be internal
+    @property
     def remotes(self):
-        return self.repository.remotes
+        _remotes = self.repository.remotes
+        remotes = [dict(name = remote.name, url = remote.url) for remote in _remotes]
+        return remotes
 
     def list_tags(self, *w, **kw):
         return list_tags(self.repository, *w, **kw)
