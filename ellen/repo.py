@@ -80,7 +80,7 @@ class Jagare(object):
     @property
     def remotes(self):
         _remotes = self.repository.remotes
-        remotes = [dict(name = remote.name, url = remote.url) for remote in _remotes]
+        remotes = [dict(name=remote.name, url=remote.url) for remote in _remotes]
         return remotes
 
     def list_tags(self, *w, **kw):
