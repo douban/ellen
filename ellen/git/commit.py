@@ -31,11 +31,8 @@ def create_commit(repository, branch, parent,
     flag = False
     root = init_root()
     for filepath, fp, action in data:
-        if isinstance(fp, basestring):
-            content = fp
-        else:
-            content = fp.read()
-            fp.close()
+        content = fp.read()
+        fp.close()
         content = unicode_to_utf8(content)
         content = content.replace("\r\n", "\n")
         if action == "insert":
