@@ -217,13 +217,13 @@ class Jagare(object):
         return self.repository.merge_base(to_sha, from_sha)
 
     def fetch_all(self):
-        for remote in self.remotes():
+        for remote in self.remotes:
             remote.fetch()
 
     def fetch(self, name):
         try:
             target = {remote.name: remote
-                      for remote in self.remotes()}.get(name)
+                      for remote in self.remotes}.get(name)
             return target.fetch() if target else None
         except OSError:
             pass
