@@ -264,12 +264,11 @@ def format_blame_hunk(hunk, repository):
     return d
 
 
-def format_merge_result(merge_result):
+def format_merge_analysis(analysis):
+    from pygit2 import GIT_MERGE_ANALYSIS_FASTFORWARD, GIT_MERGE_ANALYSIS_UP_TO_DATE
     d = {}
-    d['is_uptodate'] = merge_result.is_uptodate
-    d['is_fastforward'] = merge_result.is_fastforward
-    d['fastforward_oid'] = (str(merge_result.fastforward_oid)
-                            if merge_result.fastforward_oid else '')
+    d['is_uptodate'] = analysis & GIT_MERGE_ANALYSIS_UP_TO_DATE
+    d['is_fastforward'] = analysis & GIT_MERGE_ANALYSIS_FASTFORWARD
     return d
 
 

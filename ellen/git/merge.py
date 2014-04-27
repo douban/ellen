@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from ellen.utils.process import git_with_repo
-from ellen.utils.format import format_merge_result, format_index
+from ellen.utils.format import format_merge_analysis, format_index
 
 
 # FIXME: param _raise ??
@@ -34,8 +34,8 @@ def merge_tree(repository, ours, theirs):
 def merge_head(repository, ref):
     target = repository.revparse_single(ref)
     oid = target.id
-    merge_result = repository.merge(oid)
-    return format_merge_result(merge_result)
+    analysis = repository.merge_analysis(oid)
+    return format_merge_analysis(analysis)
 
 
 def merge_commits(repository, ours, theirs):
