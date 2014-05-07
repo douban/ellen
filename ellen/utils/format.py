@@ -281,7 +281,7 @@ def format_index(merge_index):
 def is_blob_binary(blob):
     is_binary = blob.is_binary
     if is_binary:
-        content_type = magic.from_buffer(blob.data, mime=True)
+        content_type = magic.from_buffer(blob.data[:1024], mime=True)
         # FIXME: dirty hack for 'text/x-python'
         if content_type and content_type.startswith('text/'):
             is_binary = False
