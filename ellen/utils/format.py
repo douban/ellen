@@ -13,6 +13,19 @@ from ellen.utils.git import PYGIT2_OBJ_TYPE
 # from ellen.utils.text import highlight_code # no use yet
 from ellen.utils.text import trunc_utf8
 
+m = magic._get_magic_type(True)
+magic.magic_setflags(m.cookie,
+                     magic.MAGIC_NONE |
+                     magic.MAGIC_NO_CHECK_COMPRESS |
+                     magic.MAGIC_NO_CHECK_TAR |
+                     magic.MAGIC_NO_CHECK_SOFT |
+                     magic.MAGIC_NO_CHECK_APPTYPE |
+                     magic.MAGIC_NO_CHECK_ELF |
+                     magic.MAGIC_NO_CHECK_FORTRAN |
+                     magic.MAGIC_NO_CHECK_TROFF |
+                     magic.MAGIC_NO_CHECK_TOKENS |
+                     magic.MAGIC_MIME)
+
 
 def format_obj(obj, repository):
     func_name = 'format_' + PYGIT2_OBJ_TYPE[obj.type]
