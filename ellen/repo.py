@@ -80,7 +80,8 @@ class Jagare(object):
     @property
     def remotes(self):
         _remotes = self.repository.remotes
-        remotes = [dict(name=remote.name, url=remote.url) for remote in _remotes]
+        remotes = [dict(name=remote.name, url=remote.url)
+                   for remote in _remotes]
         return remotes
 
     def list_tags(self, *w, **kw):
@@ -152,20 +153,21 @@ class Jagare(object):
 
     @classmethod
     def _clone(cls, url, path, bare=None, branch=None, mirror=None,
-               env=None):
+               env=None, shared=None):
         # TODO: check clone result
         clone_repository(url, path,
                          bare=bare, checkout_branch=branch,
-                         mirror=mirror, env=env)
+                         mirror=mirror, env=env, shared=shared)
         jagare = Jagare(path)
         if bare:
             update_server_info(jagare.repository)
         return jagare
 
-    def clone(self, path, bare=None, branch=None, mirror=None, env=None):
+    def clone(self, path, bare=None, branch=None,
+              mirror=None, env=None, shared=None):
         return self._clone(self.repository.path, path,
                            bare=bare, branch=branch,
-                           mirror=mirror, env=env)
+                           mirror=mirror, env=env, shared=shared)
 
     @classmethod
     def mirror(cls, url, path, bare=None, branch=None, env=None):
