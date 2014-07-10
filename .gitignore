@@ -20,3 +20,7 @@ build
 tmp
 .ropeproject
 venv/
+.directory
+.project
+.pydevproject
+.settings/
