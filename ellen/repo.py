@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-
-from pygit2 import GIT_OBJ_COMMIT
-from pygit2 import Repository
-
 from ellen.git.archive import archive_repository
 from ellen.git.blame import blame
 from ellen.git.clone import clone_repository, update_server_info
@@ -26,6 +21,11 @@ from ellen.git.tree import ls_tree
 from ellen.utils import JagareError
 from ellen.utils.format import format_obj
 from ellen.utils.git import resolve_version, resolve_type
+from pygit2 import GIT_OBJ_COMMIT
+from pygit2 import Repository
+import os
+
+
 
 
 class Jagare(object):
@@ -44,6 +44,7 @@ class Jagare(object):
         return not self.__eq__(other)
 
     def __hash__(self):
+        
         return hash(self.path)
 
     def __repr__(self):
@@ -260,8 +261,12 @@ class Jagare(object):
     def update_hooks(self, path):
         return update_hooks(self.repository, path)
     
-    def gc(self):
-        return gc_repository(self.repository) 
+    def gc(self, fork_paths=None, auto=None, prune=None):
+        forks = []
+        if isinstance(fork_paths, (list, tuple)):
+            for p in fork_paths:
+                forks.append(repository(p)) 
+        return gc_repository(self.repository, forks, auto=auto, prune=prune) 
 
 def repository(path):
     try:
