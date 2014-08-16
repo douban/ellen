@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
@@ -281,3 +280,4 @@ def is_git_dir(d):
         return isfile(headref) or (islink(headref) and
                                    os.readlink(headref).startswith('refs'))
     return False
+
