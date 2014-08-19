@@ -3,6 +3,7 @@
 import os
 from pygit2 import Repository as _Repository
 from ellen.git2.init import init_repository
+from ellen.git2.entry import list_entries
 
 
 class Repository(object):
@@ -69,6 +70,9 @@ class Repository(object):
     # Tree
     def list_trees(self):
         return
+
+    def list_entries(self, *k, **kw):
+        return list_entries(self._pygit2_repository, *k, **kw)
 
     # Hook
     def patch_hook(self, path):
