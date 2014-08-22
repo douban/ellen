@@ -3,9 +3,12 @@
 from ellen.utils.process import git_with_repo
 import logging
 import pygit2
+import re
 import sys
 
 logger = logging.getLogger()
+
+p_commit = re.compile(r"^([0-9a-f]{40})\s+commit$")
 
 def gc_repository(repository, forks, aggressive=None, auto=None, quiet=None, 
                   prune=None):
@@ -21,20 +24,25 @@ def gc_repository(repository, forks, aggressive=None, auto=None, quiet=None,
             ret['unpack_unreachable'] = prune 
         return ret
     
-    def add_fork_commit_lists(repo, forks):
+    def get_commit_in_lines(s):
+        s = s.split('\n')
+        ret = []
+        for p in s:
+            c = p_commit.search(p)
+            if c:
+                ret.append(c.group(1))
+                
+    def add_fork_commits(forks, items=None):
         commits = []
         for f in forks:
             remote_branches = f.listall_branches(pygit2.GIT_BRANCH_REMOTE)
             for b in remote_branches:
                 c = f.revparse_single(b).hex
-                try:
-                    repo.revparse_single(c)
+                if not items or c in items:
                     commits.append(c)
-                except:
-                    pass
-        return commits
+        return list(set(commits))
     
-    def _check_status(status, action):
+    def check_status(status, action):
         if status['returncode'] != 0:
             raise RuntimeError("'%s' failed during git.multi_gc" % action)
         print(ret)
@@ -48,28 +56,30 @@ def gc_repository(repository, forks, aggressive=None, auto=None, quiet=None,
                   prune=prune)
             
         ret = git.pack_refs(all=True, prune=True)
-        _check_status(ret, 'pack-refs')
+        check_status(ret, 'pack-refs')
         
         git = git_with_repo(repository)
         # todo: subcommand
         ret = git.reflog('expire', all=True)
-        _check_status(ret, 'reflog')
+        check_status(ret, 'reflog')
         
         git = git_with_repo(repository)
         opts = repack_all_option()
         ret = git.repack(d=True, l=True, a=opts['a'], A=opts['A'], 
                    unpack_unreachable=opts['unpack_unreachable'])
-        _check_status(ret, 'repack')
+        check_status(ret, 'repack')
         
         git = git_with_repo(repository)
-        commits = add_fork_commit_lists(repository, forks)
+        ret = git.prune(n=True, expire=prune)
+        commits = get_commit_in_lines(ret['stdout']) 
+        commits = add_fork_commits(forks, items=commits)
         # todo: is it `--expire <expire>` ok?
         ret = git.prune(commits, expire=prune)
-        _check_status(ret, 'prune')
+        check_status(ret, 'prune')
         
         git = git_with_repo(repository)
         ret = git.rerere('gc')
-        _check_status(ret, 'rerere')
+        check_status(ret, 'rerere')
     except Exception as e:
         print >>sys.stderr, e 
     return ret
