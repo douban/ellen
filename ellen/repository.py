@@ -7,6 +7,7 @@ from ellen.git2.entry import list_entries
 from ellen.git2.commit import resolve_commit
 from ellen.git2.object import resolve_type
 from ellen.git2.blob import resolve_blob
+from ellen.git2.tag import list_tags
 
 
 class Repository(object):
@@ -55,7 +56,7 @@ class Repository(object):
 
     # Tag
     def list_tags(self):
-        return
+        return self.list_tags(self._pygit2_repository)
 
     def create_tag(self):
         return
