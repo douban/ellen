@@ -17,7 +17,7 @@ def list_entries(repository, reference, path=None, recursive=None):
             _tree_list = _walk_tree(_tree, path)
             for _index, _entry in enumerate(_tree_list):
                 walker.insert(index + _index + 1, _entry)
-        rs[path] = entry
+        rs[path] = Entry(entry)
     return rs
 
 
@@ -54,3 +54,25 @@ def _walk_tree(tree, path=None):
     for entry in tree:
         entry_list.append((entry, path))
     return entry_list
+
+
+class Entry(object):
+
+    def __init__(self, entry):
+        self.id = entry.id
+        self.hex = entry.hex
+        self.type = entry.type
+        self.filemode = entry.filemode
+
+    @property
+    def is_commit(self):
+        return self.type == GIT_OBJ_COMMIT
+        pass
+
+    @property
+    def is_blob(self):
+        return self.type == GIT_OBJ_BLOB
+
+    @property
+    def is_tree(self):
+        return self.type == GIT_OBJ_TREE
