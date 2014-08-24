@@ -56,7 +56,7 @@ class Repository(object):
 
     # Tag
     def list_tags(self):
-        return self.list_tags(self._pygit2_repository)
+        return list_tags(self._pygit2_repository)
 
     def create_tag(self):
         return
