@@ -62,6 +62,7 @@ class Entry(object):
         self.id = entry.id
         self.hex = entry.hex
         self.type = entry.type
+        self.name = entry.name
         self.filemode = entry.filemode
 
     @property
