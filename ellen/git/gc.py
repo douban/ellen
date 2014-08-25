@@ -6,19 +6,21 @@ import pygit2
 import re
 import sys
 
-p_commit = re.compile(r"^([0-9a-f]{40})\s+commit$")
-p_obj = re.compile(r"^[0-9a-f]{38}$")
+P_COMMIT = re.compile(r"^([0-9a-f]{40})\s+commit$")
+P_OBJ = re.compile(r"^[0-9a-f]{38}$")
 
-aggressive_window = 250
-gc_auto_threshold = 6700
-gc_auto_pack_limit = 50
-expire = '2.weeks.ago'
+AGGRESSIVE_WINDOW = 250
+AUTO_THRESHOLD = 6700
+AUTO_PACK_LIMIT = 50
+EXPIRE = '2.weeks.ago'
 
 def gc_repository(repository, forks, aggressive=None, auto=None, quiet=None, 
                   prune=None):
     """git gc command
     """
-    expire = prune if prune != 'all' else 'now'
+    expire = 'now' if prune == 'all' else prune
+    if not expire:
+        expire = EXPIRE 
     repack_all_opts = {'a' : None, 'A' : None, 'unpack_unreachable' : None}
 
     def add_repack_all_options():
@@ -29,44 +31,42 @@ def gc_repository(repository, forks, aggressive=None, auto=None, quiet=None,
             repack_all_opts['unpack_unreachable'] = prune 
     
     def _too_many_loose_objects():
-        def get_a_dir(root, files):
-            for f in files:
-                path = os.path.join(root, f)
-                if os.path.isdir(path):
-                    return path
-        
         obj_dir = os.path.join(repository.path, "objects/")
-        if gc_auto_threshold <= 0:
+        if AUTO_THRESHOLD <= 0:
             return False
-        auto_thr = (gc_auto_threshold + 255) // 256
+        auto_thr = (AUTO_THRESHOLD + 255) // 256
         if os.path.isdir(obj_dir):
             files = os.listdir(obj_dir)
+            root = obj_dir
             if files:
-                root = get_a_dir(obj_dir, files)
+                for f in files:
+                    path = os.path.join(root, f)
+                    if os.path.isdir(path):
+                        root = path
                 if root:
                     cnt = 0
                     for f in os.listdir(root):
                         path = os.path.join(root, f)
-                        if os.path.isfile(path) and p_obj.search(f):
+                        if os.path.isfile(path) and P_OBJ.search(f):
                             cnt = cnt + 1
                     if cnt > auto_thr:
                         return True
         return False
     
     def _too_many_packs():
-        if gc_auto_pack_limit <= 0:
+        if AUTO_PACK_LIMIT <= 0:
             return False
         path = os.path.join(repository.path, "objects/info/packs")
         if os.path.isfile(path):
             with open(path, 'r') as f:
                 lines = f.readlines()
                 packs = len(lines) - 1
-                if packs >= gc_auto_pack_limit:
+                if packs >= AUTO_PACK_LIMIT:
                     return True
         return False
     
     def need_to_gc():
-        if gc_auto_threshold <= 0:
+        if AUTO_THRESHOLD <= 0:
             return False
         if _too_many_packs():
             add_repack_all_options()
@@ -74,26 +74,18 @@ def gc_repository(repository, forks, aggressive=None, auto=None, quiet=None,
             return False
         return True
     
-    def get_commit_in_lines(s):
-        s = s.split('\n')
+    def filter_commits_for_prune(repo_commits):
         ret = []
-        for p in s:
-            c = p_commit.search(p)
-            if c:
-                ret.append(c.group(1))
-        return ret
-                
-    def add_fork_commits(repo_commits):
-        commits = []
         for f in forks:
             remote_branches = f.listall_branches(pygit2.GIT_BRANCH_REMOTE)
             for b in remote_branches:
                 c = f.revparse_single(b).hex
                 if not repo_commits or c in repo_commits:
-                    commits.append(c)
-        return list(set(commits))
+                    ret.append(c)
+        return list(set(ret))
     
     def check_status(status, action=None):
+        print(status)
         if status['returncode'] != 0:
             raise RuntimeError("'%s' failed during git.multi_gc" % action)
     
@@ -110,30 +102,30 @@ def gc_repository(repository, forks, aggressive=None, auto=None, quiet=None,
                 return ret
         else:
             add_repack_all_options()
-            
         ret = git.pack_refs(all=True, prune=True)
         check_status(ret, action='pack-refs')
-        
-        git = git_with_repo(repository)
-        # todo: subcommand
+
         ret = git.reflog('expire', all=True)
         check_status(ret, action='reflog')
         
-        git = git_with_repo(repository)
         ret = git.repack(d=True, l=True, a=repack_all_opts['a'], 
                          A=repack_all_opts['A'], 
                          unpack_unreachable=repack_all_opts['unpack_unreachable'])
         check_status(ret, action='repack')
         
-        git = git_with_repo(repository)
+        # dry-run for commits in THIS repo to be pruned
         ret = git.prune(n=True, expire=expire)
-        commits = get_commit_in_lines(ret['stdout']) 
-        commits = add_fork_commits(commits)
-        # todo: is it `--expire <expire>` ok?
+        s = ret['stdout'].split('\n')
+        commits = []
+        for p in s:
+            c = P_COMMIT.search(p)
+            if c:
+                commits.append(c.group(1))
+        # seek commits will be prune truly and do pruning
+        commits = filter_commits_for_prune(commits)
         ret = git.prune(commits, expire=expire)
         check_status(ret, action='prune')
         
-        git = git_with_repo(repository)
         ret = git.rerere('gc')
         check_status(ret, action='rerere')
     except Exception as e:
