@@ -1,11 +1,8 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from pygit2 import GIT_OBJ_TAG
 from pygit2 import GIT_SORT_TIME
 from pygit2 import GIT_SORT_TOPOLOGICAL
-
-from ellen.utils.format import format_commit
 
 
 def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
@@ -63,8 +60,7 @@ def rev_list(repository, to_ref, from_ref=None, path=None, skip=0,
             break
     if skip:
         commits_index_list = commits_index_list[skip:]
-    return [format_commit(commits_dict[i], repository)
-            for i in commits_index_list]
+    return [commits_dict[i] for i in commits_index_list]
 
 
 def _check_author(commit, author):
@@ -111,7 +107,6 @@ def _check_message(commit, query):
         return True
 
 
-# FIXME: add quick diff
 def _check_file_change(commit, path):
     if path and commit.is_changed([path], no_diff=True)[0]:
         return True

@@ -4,7 +4,7 @@ import os
 from pygit2 import Repository as _Repository
 from ellen.git2.init import init_repository
 from ellen.git2.entry import list_entries
-from ellen.git2.commit import resolve_commit
+from ellen.git2.commit import resolve_commit, list_commits
 from ellen.git2.object import resolve_type
 from ellen.git2.blob import resolve_blob
 from ellen.git2.tag import list_tags
@@ -78,15 +78,32 @@ class Repository(object):
     def list_entries(self, *k, **kw):
         return list_entries(self._pygit2_repository, *k, **kw)
 
+    def resolve_entry(self, reference):
+        return self._pygit2_repository.revparse_single(reference)
+
+    # Commit
+    def list_commits(self, *k, **kw):
+        return list_commits(self._pygit2_repository, *k, **kw)
+
     def resolve_commit(self, reference):
         return resolve_commit(self._pygit2_repository, reference)
 
     def resolve_blob(self, reference):
         return resolve_blob(self._pygit2_repository, reference)
 
-    def resolve_entry(self, reference):
-        return self._pygit2_repository.revparse_single(reference)
-
     # Hook
     def patch_hook(self, path):
+        pass
+
+    # Porcelain
+    def push(self):
+        pass
+
+    def merge(self):
+        pass
+
+    def fetch(self):
+        pass
+
+    def diff(self):
         pass

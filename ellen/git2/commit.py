@@ -4,6 +4,7 @@ from pygit2 import (GIT_OBJ_TAG,
                     GIT_OBJ_BLOB,
                     GIT_OBJ_TREE,
                     GIT_OBJ_COMMIT)
+from ellen.git2.rev_list import rev_list
 
 
 def resolve_commit(repository, reference):
@@ -22,3 +23,7 @@ def resolve_commit(repository, reference):
     except ValueError:
         return None
     return commit
+
+
+def list_commits(repository, *k, **kw):
+    return rev_list(repository, *k, **kw)
