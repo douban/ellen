@@ -19,4 +19,9 @@ build
 # others
 tmp
 .ropeproject
-venv/
+
+# pydev
+.directory
+.project
+.pydevproject
+.settings/

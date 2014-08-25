@@ -1,30 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-
-from pygit2 import Repository
-from pygit2 import GIT_OBJ_COMMIT
-
-from ellen.git.tree import ls_tree
-from ellen.git.rev_list import rev_list
-from ellen.git.rename import detect_renamed
-from ellen.git.tag import list_tags, create_tag
-from ellen.git.commit import create_commit
-from ellen.git.diff import diff_wrapper as diff
-from ellen.git.ref import update_ref
-from ellen.git.clone import clone_repository, update_server_info
-from ellen.git.init import init_repository
 from ellen.git.archive import archive_repository
 from ellen.git.blame import blame
+from ellen.git.clone import clone_repository, update_server_info
+from ellen.git.commit import create_commit
+from ellen.git.diff import diff_wrapper as diff
+from ellen.git.fetch import fetch_repository
 from ellen.git.format_patch import format_patch
+from ellen.git.gc import gc_repository
+from ellen.git.hook import update_hooks
+from ellen.git.init import init_repository
 from ellen.git.merge import merge, merge_tree, merge_head, merge_commits
 from ellen.git.push import push
-from ellen.git.fetch import fetch_repository
-from ellen.git.hook import update_hooks
+from ellen.git.ref import update_ref
+from ellen.git.rename import detect_renamed
+from ellen.git.rev_list import rev_list
+from ellen.git.tag import list_tags, create_tag
+from ellen.git.tree import ls_tree
 from ellen.utils import JagareError
 from ellen.utils.format import format_obj
 from ellen.utils.git import resolve_version, resolve_type
+from pygit2 import GIT_OBJ_COMMIT
+from pygit2 import Repository
+import os
+
+
 
 
 class Jagare(object):
@@ -43,6 +44,7 @@ class Jagare(object):
         return not self.__eq__(other)
 
     def __hash__(self):
+        
         return hash(self.path)
 
     def __repr__(self):
@@ -260,7 +262,13 @@ class Jagare(object):
 
     def update_hooks(self, path):
         return update_hooks(self.repository, path)
-
+    
+    def gc(self, fork_paths=None, auto=None, prune=None):
+        forks = []
+        if isinstance(fork_paths, (list, tuple)):
+            for p in fork_paths:
+                forks.append(repository(p)) 
+        return gc_repository(self.repository, forks, auto=auto, prune=prune) 
 
 def repository(path):
     try:

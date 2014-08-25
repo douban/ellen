@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import shlex
 import logging
+import shlex
 import subprocess
 
 logger = logging.getLogger(__name__)
@@ -56,10 +56,18 @@ class Process(object):
 
     def _parse_args(self, *a, **kw):
         cmds = []
-        for p in a:
-            if not isinstance(p, (str, unicode)):
+
+        def _append(s):
+            if not isinstance(s, (str, unicode)):
                 raise KeyError
-            cmds.append(p)
+            cmds.append(s)
+        
+        for p in a:
+            if isinstance(p, (list, tuple)):
+                for pp in p:
+                    _append(pp)
+            else:
+                _append(p)
 
         for k, v in kw.iteritems():
             if len(k) == 1:
