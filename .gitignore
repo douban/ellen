@@ -20,3 +20,4 @@ build
 tmp
 .ropeproject
 venv/
+.idea
