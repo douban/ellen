@@ -53,7 +53,13 @@ class Process(object):
 
     def call(self, cmdstr='', env=None):
         extra_cmds = _shlex_split(cmdstr)
-        return _call(self.cmds + extra_cmds, env=env)
+        result = _call(self.cmds + extra_cmds, env=env)
+        if result['returncode'] != 0:
+            error = result['returncode']
+            msg = result['stderr']
+            cmd = result['fullcmd']
+            raise GitError(cmd, error, msg)
+        return result['stdout']
 
 
 def _shlex_split(cmd):
@@ -83,6 +89,10 @@ def _call(cmd, env=None):
     result['stderr'] = err
     result['fullcmd'] = " ".join(cmd)
     return result
+
+
+class GitError(Exception):
+    pass
 
 
 process = Process()
