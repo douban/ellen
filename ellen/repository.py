@@ -2,6 +2,7 @@
 
 import os
 from pygit2 import Repository as _Repository
+from ellen.git.ref import update_ref
 from ellen.git2.entry import list_entries
 from ellen.git2.commit import resolve_commit, list_commits
 from ellen.git2.object import resolve_type
@@ -57,8 +58,8 @@ class Repository(object):
     def lookup_reference(self):
         return
 
-    def update_reference(self):
-        return
+    def update_reference(self, reference, newvalue):
+        return update_ref(self._pygit2_repository, reference, newvalue)
 
     # Tag
     def list_tags(self):

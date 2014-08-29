@@ -44,7 +44,8 @@ def get_tree(repository, reference, path):
         tree_obj = obj.tree
 
     if path:
-        return tree_obj[path]
+        tree_entry = tree_obj[path]
+        tree_obj = repository[tree_entry.id]
 
     return tree_obj
 
