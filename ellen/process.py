@@ -97,3 +97,18 @@ class GitError(Exception):
 
 process = Process()
 git = process.bake('git')
+
+
+def git_with_path(git_dir=None, work_tree=None):
+    baked = git.bake()
+    if git_dir:
+        baked = baked.bake('--git-dir', git_dir)
+    if work_tree:
+        baked = baked.bake('--work-tree', work_tree)
+    return baked
+
+
+def git_with_repo(repository):
+    git_dir = repository.path
+    work_tree = repository.workdir
+    return git_with_path(git_dir, work_tree)
