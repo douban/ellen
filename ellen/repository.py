@@ -13,8 +13,8 @@ from ellen.git2.fetch import fetch
 from ellen.git2.init import init
 from ellen.git2.push import push
 from ellen.git2.merge import merge
+from ellen.git2.diff import diff
 from ellen.git.blame import blame
-from ellen.git.diff import diff_wrapper as diff
 
 
 class Repository(object):
