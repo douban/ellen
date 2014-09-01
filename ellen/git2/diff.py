@@ -14,8 +14,8 @@ def diff(repository, reference, from_reference=None,
         flags |= GIT_DIFF_IGNORE_WHITESPACE
 
     if not from_reference:
-        commit = resolve_commit(reference)
-        from_reference, reference = diff_commit(commit)
+        commit = resolve_commit(repository, reference)
+        from_reference, reference = diff_commit(repository, commit)
 
     if not from_reference:
         d = commit.tree.diff_to_tree(swap=True, flags=flags,
