@@ -46,10 +46,10 @@ class Repository(object):
 
     # Remote
     def list_remotes(self):
-        return
+        return self.repository.remotes
 
-    def create_remote(self):
-        return
+    def create_remote(self, name, url):
+        return self.repository.create_remote(name, url)
 
     # Reference
     def list_references(self):
