@@ -15,6 +15,7 @@ from ellen.git2.push import push
 from ellen.git2.merge import merge
 from ellen.git2.diff import diff
 from ellen.git.blame import blame
+from ellen.git2.clone import clone
 
 
 class Repository(object):
@@ -25,7 +26,7 @@ class Repository(object):
 
     # Repository
     @classmethod
-    def init_repository(cls, path, work_path=None, bare=None):
+    def init(cls, path, work_path=None, bare=None):
         # if parent dir not exist, create it.
         if not os.path.exists(path):
             os.makedirs(path)
@@ -33,8 +34,8 @@ class Repository(object):
         return cls(path)
 
     @classmethod
-    def clone_repository(cls):
-        return
+    def clone(cls, *k, **kw):
+        return clone(self._pygit2_repository, *k, **kw)
 
     @classmethod
     def import_repository(cls):
