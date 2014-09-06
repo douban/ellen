@@ -12,6 +12,7 @@ from ellen.git.rename import detect_renamed
 from ellen.git.tag import list_tags, create_tag
 from ellen.git.commit import create_commit
 from ellen.git.diff import diff_wrapper as diff
+from ellen.git.gc import gc_repository
 from ellen.git.ref import update_ref
 from ellen.git.clone import clone_repository, update_server_info
 from ellen.git.init import init_repository
@@ -260,6 +261,13 @@ class Jagare(object):
 
     def update_hooks(self, path):
         return update_hooks(self.repository, path)
+
+    def gc(self, fork_paths=None, auto=None, prune=None):
+        forks = []
+        if isinstance(fork_paths, (list, tuple)):
+            for p in fork_paths:
+                forks.append(repository(p))
+        return gc_repository(self.repository, forks, auto=auto, prune=prune)
 
 
 def repository(path):
