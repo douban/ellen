@@ -5,62 +5,36 @@ import sys
 from functools import wraps
 from ellen.utils.process import git_with_repo
 
-P_COMMIT = re.compile(r"^([0-9a-f]{40})\s+commit$")
 P_OBJ = re.compile(r"^[0-9a-f]{38}$")
 
 AGGRESSIVE_WINDOW = 250
 AUTO_THRESHOLD = 6700
 AUTO_PACK_LIMIT = 50
 EXPIRE = '2.weeks.ago'
-REPACK_ALL_OPTS = {'a': None, 'A': None, 'unpack_unreachable': None}
+_OPTS = {'repack_all': {}}
 
 
 def check_status(f):
     @wraps(f)
     def wrapper(*a, **kw):
+        fn = a[0]
         status = f(*a, **kw)
         if status['returncode'] != 0:
-            raise RuntimeError("'%s' failed during git.multi_gc" % f.__name__)
+            raise RuntimeError("'%s' failed during git.multi_gc" % fn.__name__)
         return status
     return wrapper
 
 
 @check_status
-def git_log(git, *a, **kw):
-    return git.log(*a, **kw)
-
-
-@check_status
-def git_pack_refs(git, *a, **kw):
-    return git.pack_refs(*a, **kw)
-
-
-@check_status
-def git_reflog(git, *a, **kw):
-    return git.reflog(*a, **kw)
-
-
-@check_status
-def git_repack(git, *a, **kw):
-    return git.repack(*a, **kw)
-
-
-@check_status
-def git_prune(git, *a, **kw):
-    return git.prune(*a, **kw)
-
-
-@check_status
-def git_rerere(git, *a, **kw):
-    return git.rerere(*a, **kw)
+def git_process(fn, *a, **kw):
+    return fn(*a, **kw)
 
 
 def _update_repack_all_options(expire=EXPIRE):
-    if "now" == expire:
-        REPACK_ALL_OPTS['a'] = True
-    elif expire:
-        REPACK_ALL_OPTS['A'] = True
-        REPACK_ALL_OPTS['unpack_unreachable'] = expire
+    a = True if "now" == expire else None
+    A = True if expire else None
+    unpack_unreachable = expire if expire else None
+    _OPTS['repack_all'] = dict(a=a, A=A, unpack_unreachable=unpack_unreachable)
 
 
 def _too_many_loose_objects(repository):
@@ -94,7 +68,7 @@ def _too_many_packs(repository):
         return False
     path = os.path.join(repository.path, "objects/info/packs")
     if not os.path.isfile(path):
-        return  False
+        return False
     with open(path, 'r') as f:
         lines = f.readlines()
         packs = len(lines) - 1
@@ -113,6 +87,37 @@ def need_to_gc(repository, expire=EXPIRE):
     return True
 
 
+class BfsQue(object):
+    def __init__(self, wanted, cnd_fn=lambda x, s: x in s):
+        self.data = []
+        self.visited = []
+        self.wanted = wanted
+        self.cnd = cnd_fn
+
+    def _visit(self, item):
+        addq = lambda q, x: q.append(x)
+        if self.cnd(item, self.wanted) and item not in self.data:
+            addq(self.data, item)
+            return True
+        addq(self.visited, item)
+        return False
+
+    def search(self, item):
+        empty = lambda x: len(x) == 0
+        addq = lambda q, x: q.append(x)
+        delq = lambda x: x.pop(0)
+        avail = []
+        if self._visit(item):
+            return
+        addq(avail, item)
+        while not empty(avail):
+            c = delq(avail)
+            for p in c.parents:
+                if p in self.visited or self._visit(p):
+                    continue
+                addq(avail, p)
+
+
 def gc_repository(repository, forks, auto=None, prune=None):
     """git gc command
     """
@@ -120,14 +125,16 @@ def gc_repository(repository, forks, auto=None, prune=None):
     if not expire:
         expire = EXPIRE
 
+    git = git_with_repo(repository)
+    status = {'returncode': 0, 'fullcmd': '%s multi-gc' % ' '.join(git.cmds), 'stderr': '', 'stdout': ''}
     try:
-        git = git_with_repo(repository)
-        status = {'returncode': 0, 'fullcmd': '%s multi-gc' % ' '.join(git.cmds), 'stderr': '', 'stdout': ''}
+        prune_opts = []
         if prune:
-            prune_opt = "--prune=" + prune
-            status['fullcmd'] += ' ' + prune_opt
+            prune_opts.append("--prune=" + prune)
+            status['fullcmd'] += ' ' + prune_opts[0]
+
         if not forks:
-            return git.gc(prune_opt, auto=auto) if prune else git.gc(auto=auto)
+            return git.gc(*prune_opts, auto=auto)
         else:
             paths = [ "--fork='%s'" % r.path for r in forks]
             status['fullcmd'] += ' ' + ' '.join(paths)
@@ -139,26 +146,19 @@ def gc_repository(repository, forks, auto=None, prune=None):
         else:
             _update_repack_all_options(expire=expire)
 
-        git_pack_refs(git, all=True, prune=True)
-        git_reflog(git, 'expire', all=True)
-        git_repack(git, d=True, l=True, a=REPACK_ALL_OPTS['a'],
-                   A=REPACK_ALL_OPTS['A'],
-                   unpack_unreachable=REPACK_ALL_OPTS['unpack_unreachable'])
+        git_process(git.pack_refs, all=True, prune=True)
+        git_process(git.reflog, 'expire', all=True)
+        git_process(git.repack, d=True, l=True, **_OPTS['repack_all'])
 
-        # seek commits to be pruned
-        all_fork_commits = []
-        commits = set()
+        que = BfsQue(repository, cnd_fn=lambda commit, repo: commit.id in repo)
         for f in forks:
-            fork_git = git_with_repo(f)
-            all_fork_commits += git_log(fork_git, '--pretty=format:%H', all=True)['stdout'].splitlines()
-        for line in git_prune(git, dry_run=True, expire=expire)['stdout'].splitlines():
-            matcher = P_COMMIT.search(line)
-            if matcher:
-                commits.add(matcher.group(1))
-        commits &= set(all_fork_commits)
-
-        git_prune(git, *commits, expire=expire)
-        git_rerere(git, 'gc')
+            refs = f.listall_references()
+            for ref in refs:
+                ref_commit = f.lookup_reference(ref).get_object()
+                que.search(ref_commit)
+        commits = [str(c.id) for c in que.data]
+        git_process(git.prune, *commits, expire=expire)
+        git_process(git.rerere, 'gc')
     except Exception as e:
         print >>sys.stderr, e
         status['returncode'] = -1
