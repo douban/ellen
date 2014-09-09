@@ -26,11 +26,11 @@ class Repository(object):
 
     # Repository
     @classmethod
-    def init(cls, path, work_path=None, bare=None):
+    def init(cls, path, bare=None):
         # if parent dir not exist, create it.
         if not os.path.exists(path):
             os.makedirs(path)
-        init(path, work_path=work_path, bare=bare)
+        init(path, bare=bare)
         return cls(path)
 
     @classmethod

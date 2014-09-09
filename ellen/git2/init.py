@@ -3,5 +3,5 @@
 from pygit2 import init_repository as _init_repository
 
 
-def init(path, work_path=None, bare=None):
-    _init_repository(path, workdir_path=bare, bare=bare)
+def init(path, bare=None):
+    _init_repository(path, bare=bare)
