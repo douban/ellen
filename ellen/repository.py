@@ -24,6 +24,14 @@ class Repository(object):
         self._pygit2_repository = _Repository(path)
         self._git = None
 
+    @property
+    def is_empty(self):
+        return self._pygit2_repository.is_empty
+
+    @property
+    def is_bare(self):
+        return self._pygit2_repository.is_bare
+
     # Repository
     @classmethod
     def init(cls, path, bare=None):
