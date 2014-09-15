@@ -15,7 +15,7 @@ from ellen.git2.push import push
 from ellen.git2.merge import merge
 from ellen.git2.diff import diff
 from ellen.git.blame import blame
-from ellen.git2.clone import clone
+from ellen.git2.clone import clone, clone_to
 
 
 class Repository(object):
@@ -43,7 +43,10 @@ class Repository(object):
 
     @classmethod
     def clone(cls, *k, **kw):
-        return clone(self._pygit2_repository, *k, **kw)
+        return clone(*k, **kw)
+
+    def clone_to(self, *k, **kw):
+        return clone_to(self._pygit2_repository, *k, **kw)
 
     @classmethod
     def import_repository(cls):

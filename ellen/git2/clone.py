@@ -5,15 +5,29 @@ from ellen.process import git, git_with_repo
 
 def clone(url, path,
           bare=None,
-          checkout_branch=None,
+          branch=None,
           mirror=None,
           env=None,
           shared=None):
     return git.clone(url, path,
-                     b=checkout_branch,
+                     b=branch,
                      bare=bare,
                      mirror=mirror,
                      env=env,
+                     shared=shared)
+
+
+def clone_to(repository, path,
+             bare=None,
+             branch=None,
+             mirror=None,
+             env=None,
+             shared=None):
+    return git.clone(repository.path, path,
+                     b=branch,
+                     bare=bare,
+                     env=env,
+                     mirror=mirror,
                      shared=shared)
 
 
