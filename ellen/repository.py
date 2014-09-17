@@ -132,3 +132,6 @@ class Repository(object):
 
     def blame(self, *k, **kw):
         return blame(self._pygit2_repository, *k, **kw)
+
+    def merge_base(self, reference, from_reference):
+        return self._pygit2_repository.merge_base(reference, from_reference)
