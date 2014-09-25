@@ -40,7 +40,7 @@ class Repository(object):
             return None
         elif self._pygit2_repository.head_is_unborn:
             return None
-        return Reference(self._pygit2_repository.head.name)
+        return Reference(self._pygit2_repository.head.shorthand)
 
     # Repository
     @classmethod

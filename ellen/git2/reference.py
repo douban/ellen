@@ -7,7 +7,7 @@ class Reference(object):
         self.name = name
 
     def __eq__(self, other):
-        if isinstance(other, str):
+        if isinstance(other, (str, unicode)):
             return self.name == other
         return self.name == other.name
 

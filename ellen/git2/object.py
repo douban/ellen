@@ -19,4 +19,6 @@ def resolve_type(repository, version):
         type = PYGIT2_OBJ_TYPE[obj.type]
     except KeyError:
         type = None
+    except ValueError:
+        type = None
     return type
