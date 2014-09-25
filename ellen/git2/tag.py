@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from .reference import Reference
 
 
 def list_tags(repository):
@@ -10,7 +11,7 @@ def list_tags(repository):
     return tags
 
 
-class Tag(object):
+class Tag(Reference):
 
     def __init__(self, name):
         self.name = name

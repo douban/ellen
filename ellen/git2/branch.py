@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from .reference import Reference
 
 
 def list_branches(repository):
@@ -10,7 +11,7 @@ def list_branches(repository):
     return branches
 
 
-class Branch(object):
+class Branch(Reference):
 
     def __init__(self, name):
         self.name = name
