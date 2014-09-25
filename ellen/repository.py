@@ -8,6 +8,7 @@ from ellen.git2.commit import resolve_commit, list_commits
 from ellen.git2.object import resolve_type
 from ellen.git2.blob import resolve_blob
 from ellen.git2.tag import list_tags
+from ellen.git2.branch import list_branches
 # porcelain
 from ellen.git2.fetch import fetch
 from ellen.git2.init import init
@@ -82,7 +83,7 @@ class Repository(object):
 
     # Branch
     def list_branches(self):
-        return self._pygit2_repository.listall_branches()
+        return list_branches(self._pygit2_repository)
 
     def create_branch(self):
         return
