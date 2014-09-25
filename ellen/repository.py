@@ -9,6 +9,7 @@ from ellen.git2.object import resolve_type
 from ellen.git2.blob import resolve_blob
 from ellen.git2.tag import list_tags
 from ellen.git2.branch import list_branches
+from ellen.git2.reference import Reference
 # porcelain
 from ellen.git2.fetch import fetch
 from ellen.git2.init import init
@@ -32,6 +33,14 @@ class Repository(object):
     @property
     def is_bare(self):
         return self._pygit2_repository.is_bare
+
+    @property
+    def head(self):
+        if self._pygit2_repository.is_empty:
+            return None
+        elif self._pygit2_repository.head_is_unborn:
+            return None
+        return Reference(self._pygit2_repository.head.name)
 
     # Repository
     @classmethod
