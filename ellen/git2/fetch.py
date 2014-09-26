@@ -10,7 +10,7 @@ def fetch2(repository, *w, **kw):
 
 def fetch(repository, name):
     remotes = {remote.name: remote
-               for remote in self.repository.remotes}
+               for remote in repository.remotes}
     if name:
         remotes[name].fetch()
         return None

@@ -68,10 +68,10 @@ class Repository(object):
 
     # Remote
     def list_remotes(self):
-        return self.repository.remotes
+        return self._pygit2_repository.remotes
 
     def create_remote(self, name, url):
-        return self.repository.create_remote(name, url)
+        return self._pygit2_repository.create_remote(name, url)
 
     # Reference
     def list_references(self):
